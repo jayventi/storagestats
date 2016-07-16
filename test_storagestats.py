@@ -9,7 +9,7 @@ TODO future versions will build this as part of the unit test setup.
 
 import unittest
 
-from pyFSstorageHistory import *
+from storagestats import *
 
 """
 test setup  depends  on manual creation of the following
@@ -32,29 +32,38 @@ these files are provided for testing in testdirs.zip
 class TestpyFSstorageHistory(unittest.TestCase):
 
     def setUp(self):
-        self.args = ['-r', 'C:/testdirs', '-l', '1',
-                     '-g', 'log_files/run_FSH.log',
-                     '-c', 'data_files/FS_History.csv',
-                     '-t', 'zip, txt,csv, sql,ps ,log',
+        self.args = ['-r', '/testdirs', '-l', '1',
+                     '-g', 'log_files/test_run_FSH.log',
+                     '-c', 'data_files/test_f_s_stats.csv',
+                     '-t', 'zip, txt, csv, sql, ps ,log',
                      '-v', '1',
                      '-d', 'true']
 
-        self.root_path = 'C:/testdirs'
+        self.root_path = '/testdirs'
         self.monitor_types = ['zip', 'txt', 'csv', 'sql', 'ps', 'log']
         self.log_filename = 'log_files/run_FSH.log'
         self.fs_history_csv_filepath = 'data_files/FS_History.csv'
         self.hist_report_level = 1
-        self.myFSstorageHist = pyFSstorageHistory(args=self.args, verbosity=1)
+        self.myFSstorageHist = StorageStats(args=self.args, verbosity=1)
+        self.expected_csv_date = [{'ps': '0', 'txt': '0', 'log_Cn': '1', 'log': '50000000', 'zip': '0', 'ps_Cn': '0',
+                                  'txt_Cn': '0', 'zip_Cn': '0', 'other': '0', 'sql_Cn': '0', 'sql': '0',
+                                  'path': '/testdirs\\subDirBoo', 'csv_Cn': '1', 'csv': '50000000', 'other_Cn': '0'},
+                                  {'ps': '0', 'txt': '0', 'log_Cn': '0',
+                                   'log': '0', 'zip': '0', 'ps_Cn': '0', 'txt_Cn': '0', 'zip_Cn': '0', 'other': '52429824',
+                                   'sql_Cn': '0', 'sql': '0', 'path': '/testdirs\\subDirFoo', 'csv_Cn': '0',
+                                   'csv': '0', 'other_Cn': '2'}
+                                  ]
 
     def tearDown(self):
         pass
 
     def compareOrderedListOfDicts(self, listA, listB):
         assertEqual = True
+        expected_item_cn = (len(self.monitor_types) + 1) * 2 + 1  # expected number of similar dict entries
         for i in range(len(listA)):
             shared_items = set(listA[i].items()) & set(listB[i].items())
-            if 17 != len(shared_items):  # expected number of similar dict entries
-                assertEqual = actual & False
+            if expected_item_cn != len(shared_items):  
+                assertEqual = assertEqual & False
         return assertEqual
 
     def orderedListOfDictsFromCSV(self, file):
@@ -67,8 +76,8 @@ class TestpyFSstorageHistory(unittest.TestCase):
 
     def test_01_parse_cmd_arg(self):
         #setup
-        FSstorageHistory = pyFSstorageHistory()
-        cmdargs = ['-r', 'C:/testdirs', '-l', '1',
+        FSstorageHistory = StorageStats()
+        cmdargs = ['-r', '/testdirs', '-l', '1',
                    '-g', 'log_files/run_FSH.log',
                    '-c', 'data_files/FS_History.csv',
                    '-t', 'zip, txt,csv, sql,ps ,log',
@@ -76,7 +85,7 @@ class TestpyFSstorageHistory(unittest.TestCase):
                    '-d', 'true']
         #test
         actual = FSstorageHistory.parse_cmd_arg(cmdargs, verbosity=1)
-        expected = ['C:/testdirs',
+        expected = ['/testdirs',
                     ['zip', 'txt', 'csv', 'sql', 'ps', 'log'],
                     'log_files/run_FSH.log',
                     'data_files/FS_History.csv', '1',
@@ -97,7 +106,7 @@ class TestpyFSstorageHistory(unittest.TestCase):
         self.myFSstorageHist.dir_tree_info_pars(self.root_path, dirTable, self.monitor_types)
         json_str = dirTable.to_json()
         actual = json_str
-        expected = '''{"1": {"content": {"ps": 0, "txt": 1024, "log_Cn": 1, "log": 50000000, "zip": 0, "ps_Cn": 0, "txt_Cn": 1, "zip_Cn": 0, "other": 52429824, "sql_Cn": 0, "sql": 0, "other_Cn": 2, "csv": 50000000, "csv_Cn": 1}, "parentid": 1, "children": [2, 3], "nodeid": 1, "name": "C:/testdirs"}, "2": {"content": {"ps": 0, "txt": 0, "log_Cn": 1, "log": 50000000, "zip": 0, "ps_Cn": 0, "txt_Cn": 0, "zip_Cn": 0, "other": 0, "sql_Cn": 0, "sql": 0, "other_Cn": 0, "csv": 50000000, "csv_Cn": 1}, "parentid": 1, "children": [], "nodeid": 2, "name": "C:/testdirs\\\\subDirBoo"}, "3": {"content": {"ps": 0, "txt": 0, "log_Cn": 0, "log": 0, "zip": 0, "ps_Cn": 0, "txt_Cn": 0, "zip_Cn": 0, "other": 52429824, "sql_Cn": 0, "sql": 0, "other_Cn": 2, "csv": 0, "csv_Cn": 0}, "parentid": 1, "children": [4], "nodeid": 3, "name": "C:/testdirs\\\\subDirFoo"}, "4": {"content": {"ps": 0, "txt": 0, "log_Cn": 0, "log": 0, "zip": 0, "ps_Cn": 0, "txt_Cn": 0, "zip_Cn": 0, "other": 1024, "sql_Cn": 0, "sql": 0, "other_Cn": 1, "csv": 0, "csv_Cn": 0}, "parentid": 3, "children": [], "nodeid": 4, "name": "C:/testdirs\\\\subDirFoo\\\\subDirBar"}}'''
+        expected = '''{"1": {"content": {"ps": 0, "txt": 1024, "log_Cn": 1, "log": 50000000, "zip": 0, "ps_Cn": 0, "txt_Cn": 1, "zip_Cn": 0, "other": 52429824, "sql_Cn": 0, "sql": 0, "other_Cn": 2, "csv": 50000000, "csv_Cn": 1}, "parentid": 1, "children": [2, 3], "nodeid": 1, "name": "/testdirs"}, "2": {"content": {"ps": 0, "txt": 0, "log_Cn": 1, "log": 50000000, "zip": 0, "ps_Cn": 0, "txt_Cn": 0, "zip_Cn": 0, "other": 0, "sql_Cn": 0, "sql": 0, "other_Cn": 0, "csv": 50000000, "csv_Cn": 1}, "parentid": 1, "children": [], "nodeid": 2, "name": "/testdirs\\\\subDirBoo"}, "3": {"content": {"ps": 0, "txt": 0, "log_Cn": 0, "log": 0, "zip": 0, "ps_Cn": 0, "txt_Cn": 0, "zip_Cn": 0, "other": 52429824, "sql_Cn": 0, "sql": 0, "other_Cn": 2, "csv": 0, "csv_Cn": 0}, "parentid": 1, "children": [4], "nodeid": 3, "name": "/testdirs\\\\subDirFoo"}, "4": {"content": {"ps": 0, "txt": 0, "log_Cn": 0, "log": 0, "zip": 0, "ps_Cn": 0, "txt_Cn": 0, "zip_Cn": 0, "other": 1024, "sql_Cn": 0, "sql": 0, "other_Cn": 1, "csv": 0, "csv_Cn": 0}, "parentid": 3, "children": [], "nodeid": 4, "name": "/testdirs\\\\subDirFoo\\\\subDirBar"}}'''
         self.assertEqual(actual, expected)
 
     def test_04_nodeStorageByLeve(self):
@@ -106,8 +115,8 @@ class TestpyFSstorageHistory(unittest.TestCase):
         self.myFSstorageHist.dir_tree_info_pars(self.root_path, dirTable, self.monitor_types)  # lode dri info into the tree
         #test
         realActual = self.myFSstorageHist.nodeStorageByLeve(dirTable, level=self.hist_report_level)
-        realExpected = [{'ps': 0, 'txt': 0, 'log_Cn': 1, 'log': 50000000L, 'zip': 0, 'zz_time': '07:44:17', 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 0, 'sql_Cn': 0, 'sql': 0, 'path': 'C:/testdirs\\subDirBoo', 'other_Cn': 0, 'csv': 50000000L, 'zz_level': 2, 'csv_Cn': 1, 'zz_today': '2016-07-12'},
-                        {'ps': 0, 'txt': 0, 'log_Cn': 0, 'log': 0, 'zip': 0, 'zz_time': '07:44:17', 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 52429824L, 'sql_Cn': 0, 'sql': 0, 'path': 'C:/testdirs\\subDirFoo', 'other_Cn': 2, 'csv': 0, 'zz_level': 2, 'csv_Cn': 0, 'zz_today': '2016-07-12'}
+        realExpected = [{'ps': 0, 'txt': 0, 'log_Cn': 1, 'log': 50000000L, 'zip': 0, 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 0, 'sql_Cn': 0, 'sql': 0, 'path': '/testdirs\\subDirBoo', 'other_Cn': 0, 'csv': 50000000L, 'csv_Cn': 1},
+                        {'ps': 0, 'txt': 0, 'log_Cn': 0, 'log': 0, 'zip': 0, 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 52429824L, 'sql_Cn': 0, 'sql': 0, 'path': '/testdirs\\subDirFoo', 'other_Cn': 2, 'csv': 0, 'csv_Cn': 0}
                         ]
         # compare list of dictionaries for equivalents
         actual = self.compareOrderedListOfDicts(realActual, realExpected)
@@ -122,9 +131,7 @@ class TestpyFSstorageHistory(unittest.TestCase):
         #test
         self.myFSstorageHist.appendFSHistCSVfile(DirInfoToEmit, self.fs_history_csv_filepath, delFile=True)
         # open actual fs_history_csv_filepath for actual to expected comparison
-        realExpected = [{'ps': '0', 'txt': '0', 'log_Cn': '1', 'log': '50000000', 'zip': '0', 'zz_time': '09:47:50', 'ps_Cn': '0', 'txt_Cn': '0', 'zip_Cn': '0', 'other': '0', 'sql_Cn': '0', 'sql': '0', 'path': 'C:/testdirs\\subDirBoo', 'csv_Cn': '1', 'csv': '50000000', 'zz_level': '2', 'other_Cn': '0', 'zz_today': '2016-07-12'},
-                        {'ps': '0', 'txt': '0', 'log_Cn': '0', 'log': '0', 'zip': '0', 'zz_time': '09:47:50', 'ps_Cn': '0', 'txt_Cn': '0', 'zip_Cn': '0', 'other': '52429824', 'sql_Cn': '0', 'sql': '0', 'path': 'C:/testdirs\\subDirFoo', 'csv_Cn': '0', 'csv': '0', 'zz_level': '2', 'other_Cn': '2', 'zz_today': '2016-07-12'}
-                        ]
+        realExpected = self.expected_csv_date
         # Get Ordered List Of Dicts From the self.fs_history_csv_filepath CSV just loaded
         realActual = self.orderedListOfDictsFromCSV(self.fs_history_csv_filepath)
         # compare list of dictionaries for equivalents
@@ -134,17 +141,15 @@ class TestpyFSstorageHistory(unittest.TestCase):
 
     def test_06_mainBach(self):
         # setup
-        fullArgs = ['-r', 'C:/testdirs', '-l', '1',
+        fullArgs = ['-r', '/testdirs', '-l', '1',
                     '-g', 'log_files/run_FSH.log',
                     '-c', 'data_files/FS_HistoryFull.csv',
                     '-t', 'zip, txt,csv, sql,ps ,log']
-        myNewFSstorageHist = pyFSstorageHistory(args=fullArgs, verbosity=1)
+        myNewFSstorageHist = StorageStats(args=fullArgs, verbosity=1)
         myNewFSstorageHist.mainBach()
         #test
         # open actual fs_history_csv_filepath for incomparsin
-        realExpected = [{'ps': '0', 'txt': '0', 'log_Cn': '1', 'log': '50000000', 'zip': '0', 'zz_time': '09:47:50', 'ps_Cn': '0', 'txt_Cn': '0', 'zip_Cn': '0', 'other': '0', 'sql_Cn': '0', 'sql': '0', 'path': 'C:/testdirs\\subDirBoo', 'csv_Cn': '1', 'csv': '50000000', 'zz_level': '2', 'other_Cn': '0', 'zz_today': '2016-07-12'},
-                        {'ps': '0', 'txt': '0', 'log_Cn': '0', 'log': '0', 'zip': '0', 'zz_time': '09:47:50', 'ps_Cn': '0', 'txt_Cn': '0', 'zip_Cn': '0', 'other': '52429824', 'sql_Cn': '0', 'sql': '0', 'path': 'C:/testdirs\\subDirFoo', 'csv_Cn': '0', 'csv': '0', 'zz_level': '2', 'other_Cn': '2', 'zz_today': '2016-07-12'}
-                        ]
+        realExpected = self.expected_csv_date
         # Get Ordered List Of Dicts From the self.fs_history_csv_filepath CSV just loaded
         realActual = self.orderedListOfDictsFromCSV(self.fs_history_csv_filepath)
         # compare list of dictionaries for equivalents
@@ -156,8 +161,8 @@ if __name__ == "__main__":
     unittest.main(verbosity=2)
 
 ## command line test vectors TODO FIND A TEST FRAMWORK
-# python pyFSstorageHistory.py -h
-# python pyFSstorageHistory.py -l 1 -g "log_files/run_FSH.log" -c data_files/FS_History.csv -t "zip, txt,csv, sql,ps ,log"
-# python pyFSstorageHistory.py -r C:/wamp/www -t "php, txt,csv, sql,txt ,log" -l 2
-# python pyFSstorageHistory.py -r C:/testdirs -l 1 -g "log_files/run_FSH.log" -c data_files/FS_History.csv -t "zip, txt,csv, sql,ps ,log"
-# python pyFSstorageHistory.py -r C:/testdirs -l 1 -g "log_files/run_FSH.log" -v 1
+# python StorageStats.py -h
+# python storagestats.py -l 1 -g "log_files/run_FSH.log" -c data_files/FS_History.csv -t "zip, txt,csv, sql,ps ,log"
+# python storagestats.py -r C:/wamp/www -t "php, txt,csv, sql,txt ,log" -l 2
+# python storagestats.py -r C:/testdirs -l 1 -g "log_files/run_FSH.log" -c data_files/FS_History.csv -t "zip, txt,csv, sql,ps ,log"
+# python storagestats.py -r C:/testdirs -l 1 -g "log_files/run_FSH.log" -v 1
