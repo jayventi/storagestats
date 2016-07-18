@@ -9,6 +9,8 @@ TODO future versions will build this as part of thenit test setup.
 
 import unittest
 import json
+from  os import path
+import string
 from storagestats import *
 
 """
@@ -56,6 +58,14 @@ class TestStorageStats(unittest.TestCase):
 
     def tearDown(self):
         pass
+
+    def ospath_formter_for_list_of_dicts(self, csv_list):
+        if os.path.sep == '/':
+          for row in  csv_list:
+            for key in row:
+              if isinstance( row[key], str ):
+                row[key] = string.replace(row[key], '\\', '/')
+        return csv_list
 
     def compare_ordered_list_of_dicts(self, listA, listB):
         assertEqual = True
@@ -119,6 +129,12 @@ class TestStorageStats(unittest.TestCase):
                                u'sql_Cn': 0, u'sql': 0, u'csv_Cn': 0, u'txt_Cn': 0, u'txt': 0, u'other_Cn': 1}, u'node_id': 4, u'children': [],
                                u'name': u'testdirs\\subDirFoo\\subDirBar', u'parent_id': 3}
                          }
+        if os.path.sep == '/':
+            for key_row, row in  expected_dict.iteritems():
+                for key in row:
+                    if  isinstance( row[key], basestring ):
+                        expected_dict[key_row][key] = string.replace(row[key], '\\', '/') 
+
         actual_true = True
         for key in actual_dict:
             actual_true = actual_true & (actual_dict[key] == expected_dict[key])
@@ -129,12 +145,14 @@ class TestStorageStats(unittest.TestCase):
         dirTable = TreeTable()  # init tree
         self.StorageStats.dir_tree_info_pars(self.root_path, dirTable, self.monitor_types)  # lode dri info into the tree
         #test
-        realActual = self.StorageStats.node_storage_by_leve(dirTable, level=self.hist_report_level)
-        realExpected = [{'ps': 0, 'txt': 0, 'log_Cn': 1, 'log': 50000000L, 'zip': 0, 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 0, 'sql_Cn': 0, 'sql': 0, 'path': 'testdirs\\subDirBoo', 'other_Cn': 0, 'csv': 50000000L, 'csv_Cn': 1},
+        actual_dict = self.StorageStats.node_storage_by_leve(dirTable, level=self.hist_report_level)
+        expected_dict = [{'ps': 0, 'txt': 0, 'log_Cn': 1, 'log': 50000000L, 'zip': 0, 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 0, 'sql_Cn': 0, 'sql': 0, 'path': 'testdirs\\subDirBoo', 'other_Cn': 0, 'csv': 50000000L, 'csv_Cn': 1},
                         {'ps': 0, 'txt': 0, 'log_Cn': 0, 'log': 0, 'zip': 0, 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 52429824L, 'sql_Cn': 0, 'sql': 0, 'path': 'testdirs\\subDirFoo', 'other_Cn': 2, 'csv': 0, 'csv_Cn': 0}
                         ]
+        
+        expected_dict = self.ospath_formter_for_list_of_dicts(expected_dict)        
         # compare list of dictionaries for equivalents
-        actual = self.compare_ordered_list_of_dicts(realActual, realExpected)
+        actual = self.compare_ordered_list_of_dicts(actual_dict, expected_dict)
         expected = True
         self.assertEqual(actual, expected)
 
@@ -146,7 +164,7 @@ class TestStorageStats(unittest.TestCase):
         #test
         self.StorageStats.append_fs_stats_csv_file(DirInfoToEmit, self.fs_history_csv_filepath, del_file=True)
         # open actual fs_history_csv_filepath for actual to expected comparison
-        realExpected = self.expected_csv_date
+        realExpected = self.ospath_formter_for_list_of_dicts(self.expected_csv_date)
         # Get Ordered List Of Dicts From the self.fs_history_csv_filepath CSV just loaded
         realActual = self.ordered_list_of_dicts_from_csv(self.fs_history_csv_filepath)
         # compare list of dictionaries for equivalents
@@ -164,8 +182,7 @@ class TestStorageStats(unittest.TestCase):
         my_new_fs_storage_hist.main_bach()
         #test
         # open actual fs_history_csv_filepath for incomparsin
-        realExpected = self.expected_csv_date
-        # Get Ordered List Of Dicts From the self.fs_history_csv_filepath CSV just loaded
+        realExpected = self.ospath_formter_for_list_of_dicts(self.expected_csv_date)
         realActual = self.ordered_list_of_dicts_from_csv(self.fs_history_csv_filepath)
         # compare list of dictionaries for equivalents
         actual = self.compare_ordered_list_of_dicts(realActual, realExpected)
