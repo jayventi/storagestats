@@ -14,14 +14,14 @@ from storagestats import *
 """
 test setup  depends  on manual creation of the following
 directories and files
-1 - /testdirs
+1 - testdirs
 |___ File_A.txt    1024 b
-|___ 2 - /testdirs/subDirBoo
+|___ 2 - testdirs/subDirBoo
 |     |___ File_B.log    50,000,000 b
 |     |___ File_C.csv    50,000,000 b
-|___ 3 - /testdirs/subDirFoo
+|___ 3 - testdirs/subDirFoo
       |___ File_D.tar    52,428,800 b
-      |___ 4 - /testdirs/subDirFoo/subDirBar
+      |___ 4 - testdirs/subDirFoo/subDirBar
           |___ File_E.py    1024 b
 
 these files are provided for testing in testdirs.zip
@@ -32,14 +32,14 @@ these files are provided for testing in testdirs.zip
 class TestStorageStats(unittest.TestCase):
 
     def setUp(self):
-        self.args = ['-r', '/testdirs', '-l', '1',
+        self.args = ['-r', 'testdirs', '-l', '1',
                      '-g', 'log_files/test_run_FSH.log',
                      '-c', 'data_files/test_f_s_stats.csv',
                      '-t', 'zip, txt, csv, sql, ps ,log',
                      '-v', '1',
                      '-d', 'true']
 
-        self.root_path = '/testdirs'
+        self.root_path = 'testdirs'
         self.monitor_types = ['zip', 'txt', 'csv', 'sql', 'ps', 'log']
         self.log_filename = 'log_files/run_FSH.log'
         self.fs_history_csv_filepath = 'data_files/FS_History.csv'
@@ -47,10 +47,10 @@ class TestStorageStats(unittest.TestCase):
         self.StorageStats = StorageStats(args=self.args, verbosity=1)
         self.expected_csv_date = [{'ps': '0', 'txt': '0', 'log_Cn': '1', 'log': '50000000', 'zip': '0', 'ps_Cn': '0',
                                   'txt_Cn': '0', 'zip_Cn': '0', 'other': '0', 'sql_Cn': '0', 'sql': '0',
-                                  'path': '/testdirs\\subDirBoo', 'csv_Cn': '1', 'csv': '50000000', 'other_Cn': '0'},
+                                  'path': 'testdirs\\subDirBoo', 'csv_Cn': '1', 'csv': '50000000', 'other_Cn': '0'},
                                   {'ps': '0', 'txt': '0', 'log_Cn': '0',
                                    'log': '0', 'zip': '0', 'ps_Cn': '0', 'txt_Cn': '0', 'zip_Cn': '0', 'other': '52429824',
-                                   'sql_Cn': '0', 'sql': '0', 'path': '/testdirs\\subDirFoo', 'csv_Cn': '0',
+                                   'sql_Cn': '0', 'sql': '0', 'path': 'testdirs\\subDirFoo', 'csv_Cn': '0',
                                    'csv': '0', 'other_Cn': '2'}
                                   ]
 
@@ -77,7 +77,7 @@ class TestStorageStats(unittest.TestCase):
     def test_01_parse_cmd_arg(self):
         #setup
         FSstorageHistory = StorageStats()
-        cmdargs = ['-r', '/testdirs', '-l', '1',
+        cmdargs = ['-r', 'testdirs', '-l', '1',
                    '-g', 'log_files/run_FSH.log',
                    '-c', 'data_files/FS_History.csv',
                    '-t', 'zip, txt,csv, sql,ps ,log',
@@ -85,7 +85,7 @@ class TestStorageStats(unittest.TestCase):
                    '-d', 'true']
         #test
         actual = FSstorageHistory.parse_cmd_arg(cmdargs, verbosity=1)
-        expected = ['/testdirs',
+        expected = ['testdirs',
                     ['zip', 'txt', 'csv', 'sql', 'ps', 'log'],
                     'log_files/run_FSH.log',
                     'data_files/FS_History.csv', '1',
@@ -108,16 +108,16 @@ class TestStorageStats(unittest.TestCase):
         actual_dict = json.loads(json_str)
         expected_dict = {"1": {u'content': {u'ps': 0, u'csv': 50000000, u'log_Cn': 1, u'log': 50000000, u'zip': 0, u'ps_Cn': 0, u'zip_Cn': 0,
                                 u'other': 52429824, u'sql_Cn': 0, u'sql': 0, u'csv_Cn': 1, u'txt_Cn': 1,
-                                u'txt': 1024, u'other_Cn': 2}, u'node_id': 1, u'children': [2, 3], u'name': u'/testdirs', u'parent_id': 1},
+                                u'txt': 1024, u'other_Cn': 2}, u'node_id': 1, u'children': [2, 3], u'name': u'testdirs', u'parent_id': 1},
                          "2": {u'content': {u'ps': 0, u'csv': 50000000, u'log_Cn': 1, u'log': 50000000, u'zip': 0, u'ps_Cn': 0, u'zip_Cn': 0,
                                u'other': 0, u'sql_Cn': 0, u'sql': 0, u'csv_Cn': 1, u'txt_Cn': 0, u'txt': 0, u'other_Cn': 0}, u'node_id': 2,
-                               u'children': [], u'name': u'/testdirs\\subDirBoo', u'parent_id': 1},
+                               u'children': [], u'name': u'testdirs\\subDirBoo', u'parent_id': 1},
                          "3": {u'content': {u'ps': 0, u'csv': 0, u'log_Cn': 0, u'log': 0, u'zip': 0, u'ps_Cn': 0, u'zip_Cn': 0,
                                u'other': 52429824, u'sql_Cn': 0, u'sql': 0, u'csv_Cn': 0, u'txt_Cn': 0, u'txt': 0, u'other_Cn': 2},
-                               u'node_id': 3, u'children': [4], u'name': u'/testdirs\\subDirFoo', u'parent_id': 1},
+                               u'node_id': 3, u'children': [4], u'name': u'testdirs\\subDirFoo', u'parent_id': 1},
                          "4": {u'content': {u'ps': 0, u'csv': 0, u'log_Cn': 0, u'log': 0, u'zip': 0, u'ps_Cn': 0, u'zip_Cn': 0, u'other': 1024,
                                u'sql_Cn': 0, u'sql': 0, u'csv_Cn': 0, u'txt_Cn': 0, u'txt': 0, u'other_Cn': 1}, u'node_id': 4, u'children': [],
-                               u'name': u'/testdirs\\subDirFoo\\subDirBar', u'parent_id': 3}
+                               u'name': u'testdirs\\subDirFoo\\subDirBar', u'parent_id': 3}
                          }
         actual_true = True
         for key in actual_dict:
@@ -130,8 +130,8 @@ class TestStorageStats(unittest.TestCase):
         self.StorageStats.dir_tree_info_pars(self.root_path, dirTable, self.monitor_types)  # lode dri info into the tree
         #test
         realActual = self.StorageStats.node_storage_by_leve(dirTable, level=self.hist_report_level)
-        realExpected = [{'ps': 0, 'txt': 0, 'log_Cn': 1, 'log': 50000000L, 'zip': 0, 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 0, 'sql_Cn': 0, 'sql': 0, 'path': '/testdirs\\subDirBoo', 'other_Cn': 0, 'csv': 50000000L, 'csv_Cn': 1},
-                        {'ps': 0, 'txt': 0, 'log_Cn': 0, 'log': 0, 'zip': 0, 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 52429824L, 'sql_Cn': 0, 'sql': 0, 'path': '/testdirs\\subDirFoo', 'other_Cn': 2, 'csv': 0, 'csv_Cn': 0}
+        realExpected = [{'ps': 0, 'txt': 0, 'log_Cn': 1, 'log': 50000000L, 'zip': 0, 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 0, 'sql_Cn': 0, 'sql': 0, 'path': 'testdirs\\subDirBoo', 'other_Cn': 0, 'csv': 50000000L, 'csv_Cn': 1},
+                        {'ps': 0, 'txt': 0, 'log_Cn': 0, 'log': 0, 'zip': 0, 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 52429824L, 'sql_Cn': 0, 'sql': 0, 'path': 'testdirs\\subDirFoo', 'other_Cn': 2, 'csv': 0, 'csv_Cn': 0}
                         ]
         # compare list of dictionaries for equivalents
         actual = self.compare_ordered_list_of_dicts(realActual, realExpected)
@@ -156,7 +156,7 @@ class TestStorageStats(unittest.TestCase):
 
     def test_06_main_bach(self):
         # setup
-        fullArgs = ['-r', '/testdirs', '-l', '1',
+        fullArgs = ['-r', 'testdirs', '-l', '1',
                     '-g', 'log_files/run_FSH.log',
                     '-c', 'data_files/FS_HistoryFull.csv',
                     '-t', 'zip, txt,csv, sql,ps ,log']
@@ -179,5 +179,5 @@ if __name__ == "__main__":
 # python storagestats.py -h
 # python storagestats.py -l 1 -g "log_files/run_FSH.log" -c data_files/FS_History.csv -t "zip, txt,csv, sql,ps ,log"
 # python storagestats.py -r C:/wamp/www -t "php, txt,csv, sql,txt ,log" -l 2
-# python storagestats.py -r /testdirs -l 1 -g "log_files/run_FSH.log" -c data_files/FS_History.csv -t "zip, txt,csv, sql,ps ,log"
-# python storagestats.py -r /testdirs -l 1 -g "log_files/run_FSH.log" -v 1
+# python storagestats.py -r testdirs -l 1 -g "log_files/run_FSH.log" -c data_files/FS_History.csv -t "zip, txt,csv, sql,ps ,log"
+# python storagestats.py -r testdirs -l 1 -g "log_files/run_FSH.log" -v 1

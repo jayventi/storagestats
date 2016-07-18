@@ -39,7 +39,7 @@ class StorageStats(object):
         return v.lower() in ("yes", "true", "t", "1") if v else None
 
     def __init__(self,
-                 root_path= '/testdirs', #  C:\work\Dojo',
+                 root_path= 'testdirs', #  C:\work\Dojo',
                  monitor_types=['js', 'zip', 'txt', 'csv', 'sql', 'ps', 'log'],
                  log_filename='log_files/run_log.log',
                  fs_history_csv_filepath='data_files/FSHistory.csv',
