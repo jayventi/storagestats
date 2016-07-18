@@ -1,5 +1,5 @@
 
-""" 
+"""
 FileSystem Storage History utility
 StorageStats: FileSystem Storage Statistics utility is a command line
 utility which is file system agnostic. It collecting file size statistics
@@ -39,7 +39,7 @@ class StorageStats(object):
         return v.lower() in ("yes", "true", "t", "1") if v else None
 
     def __init__(self,
-                 root_path= 'C:\work\Dojo',
+                 root_path= '/testdirs', #  C:\work\Dojo',
                  monitor_types=['js', 'zip', 'txt', 'csv', 'sql', 'ps', 'log'],
                  log_filename='log_files/run_log.log',
                  fs_history_csv_filepath='data_files/FSHistory.csv',
@@ -74,9 +74,9 @@ class StorageStats(object):
         """
         Returns a dictionary with a keys set to each monitor types
         The value is the long total size in bytes.
-        Fof each monitor file type an additional key is produced 
-        "types +'_Cn'" for file count value set to integer file 
-        count for that type. all files not falling under 
+        Fof each monitor file type an additional key is produced
+        "types +'_Cn'" for file count value set to integer file
+        count for that type. all files not falling under
         monitor_types are summarized in the default category 
         'other'
         """
@@ -85,8 +85,8 @@ class StorageStats(object):
         for k in monitor_types:
             dir_info[k], dir_info[k+'_Cn'] = 0, 0
         try:
-            dirEntryList = scandir(path)
-            for entry in dirEntryList:
+            dir_entry_list = scandir(path)
+            for entry in dir_entry_list:
                 if not entry.is_dir(follow_symlinks=False):
                     thisType = entry.name.split('.')[-1]
                     if thisType in monitor_types:
@@ -105,16 +105,16 @@ class StorageStats(object):
         """
         Recursively traverses the filesystem, loads the dirtrtable tree object
         Return a dir_info dict with statistics from it's children
-        adds a dirtrtable dir node if none exises and sets the node content 
+        adds a dirtrtable dir node if none exises and sets the node content
         to dir_info. Traverses filesystem using breath first method.
         Main algorithmic worker for StorageStats.
         """
-        if not dirtrtable.isNodeByName(path):  # if this dir has no dir node in dirtrtable make one
-            if not dirtrtable.isRootSet():  # dirtrtable has only a uninitialized root node, root needs initialization
-                dirtrtable.setRootName(path, {})  # init the root node set to this the first root dir path
+        if not dirtrtable.is_node_by_name(path):  # if this dir has no dir node in dirtrtable make one
+            if not dirtrtable.is_root_set():  # dirtrtable has only a uninitialized root node, root needs initialization
+                dirtrtable.set_root_name(path, {})  # init the root node set to this the first root dir path
             else:
-                parNodeId = dirtrtable.getNodeIdByName(os.path.dirname(path))
-                dirtrtable.addChild(path, parNodeId, {})
+                parNodeId = dirtrtable.getnode_idByName(os.path.dirname(path))
+                dirtrtable.add_child(path, parNodeId, {})
         dir_info = self.dir_totals_by_type(path, monitor_types)
 
         try:
@@ -125,7 +125,7 @@ class StorageStats(object):
                         dir_info[each] += temp_dir_info[each]
         except Exception as e:
             logging.warn( e )
-        dirtrtable.upDateNodeByName(path, dir_info)
+        dirtrtable.up_date_node_by_name(path, dir_info)
         return dir_info
 
 
@@ -136,11 +136,11 @@ class StorageStats(object):
         """
         level += 1
         dirInfoRows = []
-        childNodeList = dir_info_tree.getChildren(nodeId)
+        childNodeList = dir_info_tree.get_children(nodeId)
         if len(childNodeList) > 0:  # if not a leaf node precess childNodes
             dirInfoRows = [{}] * len(childNodeList)
             for i in range(len(childNodeList)):
-                dirnode = dir_info_tree.getNodeById(childNodeList[i])
+                dirnode = dir_info_tree.get_node_by_id(childNodeList[i])
                 dirInfoRows[i] = self.buildDirInfo(dirnode, level)
             if level < self.hist_report_level:
                 # Now iterate over children
@@ -169,7 +169,7 @@ class StorageStats(object):
         Appends DirInfo data as a single row to a CSV file
         Given a list of DirInfo dictionaries as storageDateList, append each
         as a row to csv_filename.
-        If delFile=True instead of appending tcsv_filename will be deleted 
+        If delFile=True instead of appending tcsv_filename will be deleted
         if it exists.
         """
         pathFieldName = 'path'
@@ -277,14 +277,14 @@ class StorageStats(object):
         logging.info(prtstr0)
         self.dir_tree_info_pars(self.root_path, new_dir_info_tree, self.monitor_types)
         prtstr1 = 'Total number of directory scanned: {}'
-        logging.info(prtstr1.format(new_dir_info_tree.nodeCount()))
+        logging.info(prtstr1.format(new_dir_info_tree.node_count()))
 
         # setup date for output, emit a dict of info fore each dir in tree
         # down to tree depth of self.hist_report_level
         DirInfoToEmit = self.nodeStorageByLeve(new_dir_info_tree)
         if self.verbosity >= 2:
             print('\n{}\n'.format(prtstr0))
-            print(prtstr1.format(new_dir_info_tree.nodeCount()))
+            print(prtstr1.format(new_dir_info_tree.node_count()))
         # write or append csv of FSstorageHistoryCSV
         # TODO exspose to comand line delFile=False
         self.appendFSHistCSVfile(DirInfoToEmit, self.fs_history_csv_filepath, self.del_csv)
@@ -297,7 +297,7 @@ class StorageStats(object):
             print('')
             print('{} \n'.format(prtstr2))
             # for fun
-            new_dir_info_tree.prettyTreeTable()
+            new_dir_info_tree.pretty_tree_table()
 
         return True
 
