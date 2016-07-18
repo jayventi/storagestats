@@ -173,7 +173,7 @@ class TestStorageStats(unittest.TestCase):
         self.assertEqual(actual, expected)
 
 if __name__ == "__main__":
-   unittest.main(verbosity=2)
+    unittest.main(verbosity=2)
 
 ## command line test vectors TODO FIND A TEST FRAMWORK
 # python storagestats.py -h

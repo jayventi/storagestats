@@ -236,10 +236,8 @@ class StorageStats(object):
                 print("opt : ", opt)
                 print("arg : ", arg)
             if opt in ("-h", "--help"):
-                    prtstr = '''
-                     storagestats.py -r <root_path> -t <monitor_types> -g <log_filename>
-                     -c <fs_history_csv_filepath> -l <hist_report_level> -d <del_csv> -v <verbosity>
-                     '''
+                    prtstr = 'storagestats.py -r <root_path> -t <monitor_types> -g <log_filename> ' + \
+                             '-c <fs_history_csv_filepath> -l <hist_report_level> -d <del_csv> -v <verbosity>'
                     print(prtstr)
                     sys.exit()
             elif opt in ("-r", "--root"):
