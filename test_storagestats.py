@@ -61,10 +61,10 @@ class TestStorageStats(unittest.TestCase):
 
     def ospath_formter_for_list_of_dicts(self, csv_list):
         if os.path.sep == '/':
-          for row in  csv_list:
-            for key in row:
-              if isinstance( row[key], str ):
-                row[key] = string.replace(row[key], '\\', '/')
+            for row in csv_list:
+                for key in row:
+                    if isinstance(row[key], str):
+                        row[key] = string.replace(row[key], '\\', '/')
         return csv_list
 
     def compare_ordered_list_of_dicts(self, listA, listB):
@@ -117,8 +117,8 @@ class TestStorageStats(unittest.TestCase):
         json_str = dir_table.to_json()
         actual_dict = json.loads(json_str)
         expected_dict = {"1": {u'content': {u'ps': 0, u'csv': 50000000, u'log_Cn': 1, u'log': 50000000, u'zip': 0, u'ps_Cn': 0, u'zip_Cn': 0,
-                                u'other': 52429824, u'sql_Cn': 0, u'sql': 0, u'csv_Cn': 1, u'txt_Cn': 1,
-                                u'txt': 1024, u'other_Cn': 2}, u'node_id': 1, u'children': [2, 3], u'name': u'testdirs', u'parent_id': 1},
+                               u'other': 52429824, u'sql_Cn': 0, u'sql': 0, u'csv_Cn': 1, u'txt_Cn': 1,
+                               u'txt': 1024, u'other_Cn': 2}, u'node_id': 1, u'children': [2, 3], u'name': u'testdirs', u'parent_id': 1},
                          "2": {u'content': {u'ps': 0, u'csv': 50000000, u'log_Cn': 1, u'log': 50000000, u'zip': 0, u'ps_Cn': 0, u'zip_Cn': 0,
                                u'other': 0, u'sql_Cn': 0, u'sql': 0, u'csv_Cn': 1, u'txt_Cn': 0, u'txt': 0, u'other_Cn': 0}, u'node_id': 2,
                                u'children': [], u'name': u'testdirs\\subDirBoo', u'parent_id': 1},
@@ -130,10 +130,10 @@ class TestStorageStats(unittest.TestCase):
                                u'name': u'testdirs\\subDirFoo\\subDirBar', u'parent_id': 3}
                          }
         if os.path.sep == '/':
-            for key_row, row in  expected_dict.iteritems():
+            for key_row, row in expected_dict.iteritems():
                 for key in row:
-                    if  isinstance( row[key], basestring ):
-                        expected_dict[key_row][key] = string.replace(row[key], '\\', '/') 
+                    if isinstance(row[key], basestring):
+                        expected_dict[key_row][key] = string.replace(row[key], '\\', '/')
 
         actual_true = True
         for key in actual_dict:
@@ -147,10 +147,9 @@ class TestStorageStats(unittest.TestCase):
         #test
         actual_dict = self.StorageStats.node_storage_by_leve(dirTable, level=self.hist_report_level)
         expected_dict = [{'ps': 0, 'txt': 0, 'log_Cn': 1, 'log': 50000000L, 'zip': 0, 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 0, 'sql_Cn': 0, 'sql': 0, 'path': 'testdirs\\subDirBoo', 'other_Cn': 0, 'csv': 50000000L, 'csv_Cn': 1},
-                        {'ps': 0, 'txt': 0, 'log_Cn': 0, 'log': 0, 'zip': 0, 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 52429824L, 'sql_Cn': 0, 'sql': 0, 'path': 'testdirs\\subDirFoo', 'other_Cn': 2, 'csv': 0, 'csv_Cn': 0}
-                        ]
-        
-        expected_dict = self.ospath_formter_for_list_of_dicts(expected_dict)        
+                         {'ps': 0, 'txt': 0, 'log_Cn': 0, 'log': 0, 'zip': 0, 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 52429824L, 'sql_Cn': 0, 'sql': 0, 'path': 'testdirs\\subDirFoo', 'other_Cn': 2, 'csv': 0, 'csv_Cn': 0}
+                         ]
+        expected_dict = self.ospath_formter_for_list_of_dicts(expected_dict)
         # compare list of dictionaries for equivalents
         actual = self.compare_ordered_list_of_dicts(actual_dict, expected_dict)
         expected = True
