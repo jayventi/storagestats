@@ -13,12 +13,12 @@ class TreeTableNode(object):
     """
     Tree node object contains all need data to mantane a tree
     """
-    def __init__(self, nodeid, name, parentid=None, content=None, children=None):  # TODO set all
+    def __init__(self, node_id, name, parentid=None, content=None, children=None):  # TODO set all
         if children is None:
             children = []
         if content is None:
             content = {}
-        self.nodeid = nodeid
+        self.node_id = node_id
         self.name = name
         self.content = content
         self.children = children
@@ -27,14 +27,14 @@ class TreeTableNode(object):
         #self.created = datetime.datetime # is not JSON serializable
 
     def __repr__(self):
-        return '{} : {}'.format(self.name, str(self.nodeid))
+        return '{} : {}'.format(self.name, str(self.node_id))
 
-    def addChildId(self, childId):
+    def add_child_id(self, childId):
         temp = self.children
         temp.append(childId)
         self.children = temp
 
-    def fullRepr(self):
+    def full_repr(self):
         lStr = ' chindren: ['
         if self.children:
             comm = ''
@@ -56,32 +56,31 @@ class TreeTableNode(object):
 
 class TreeTable(object):
     """
-    Main tree structure stores node in a dict as values and nodeId as keys
-    self.name is used as a index vaule self._nameToNodeid is the index hash
+    Main tree structure stores node in a dict as values and node_id as keys
+    self.name is used as a index vaule self._name_to_node_id is the index hash
     """
     def __init__(self, name='defaultTree', treeid=1, parentTreeid=None):
         self.treeid = treeid
         self.name = name
-        self.parentTreeid = parentTreeid
-        self.lastNodeid = 0
-        self._NodeTable = {}
-        self._nameToNodeid = {}
-        self.addChild('root', 1)
+        self.lastnode_id = 0
+        self._node_table = {}
+        self._name_to_node_id = {}
+        self.add_child('root', 1)
 
-    def addChild(self, name, parentid, content=None):
+    def add_child(self, name, parentid, content=None):
         """ Adds a child node, main mechanism of building a tree"""
-        nextNodeid = self.lastNodeid + 1
-        newNode = TreeTableNode(nextNodeid, name, parentid, content, [])
-        self._NodeTable[nextNodeid] = newNode
-        self.lastNodeid = nextNodeid
+        nextnode_id = self.lastnode_id + 1
+        newNode = TreeTableNode(nextnode_id, name, parentid, content, [])
+        self._node_table[nextnode_id] = newNode
+        self.lastnode_id = nextnode_id
         # add child to parent node's chaiedren list
-        parentNode = self._NodeTable[parentid]
-        if nextNodeid != parentid:  # not root node
-            parentNode.addChildId(nextNodeid)
-            self._NodeTable[parentid] = parentNode
-        self._nameToNodeid[name] = nextNodeid
+        parentNode = self._node_table[parentid]
+        if nextnode_id != parentid:  # not root node
+            parentNode.add_child_id(nextnode_id)
+            self._node_table[parentid] = parentNode
+        self._name_to_node_id[name] = nextnode_id
 
-    def setRootName(self, name, content={}):
+    def set_root_name(self, name, content={}):
         """
         Tets the roots name and content
         when a TreeTable is created one root node is generated
@@ -93,74 +92,74 @@ class TreeTable(object):
         This is the only function which changes the name
         of a node after it has been created.
         """
-        rootNodeId = 1
-        rootNode = self._NodeTable[rootNodeId]
+        rootnode_id = 1
+        rootNode = self._node_table[rootnode_id]
         rootNode.name = name
         rootNode.content = content
-        self._NodeTable[rootNodeId] = rootNode
-        self._nameToNodeid[name] = rootNodeId
-        self._nameToNodeid.pop("root", None)
+        self._node_table[rootnode_id] = rootNode
+        self._name_to_node_id[name] = rootnode_id
+        self._name_to_node_id.pop("root", None)
 
-    def addChildren(self,  parentid, children={}):
-        """ adds a list of nodeIds of children nodes to a node"""
+    def add_children(self,  parentid, children={}):
+        """ adds a list of node_ids of children nodes to a node"""
         for child in children:
-            self.addChild(child.name, parentid, child.content)
+            self.add_child(child.name, parentid, child.content)
 
-    def tableDump(self):
-        print self._NodeTable
+    def table_dump(self):
+        print self._node_table
 
-    def tableFullDump(self):
-        for eachN in self._NodeTable:
-            text = 'nodeId: {} {} \n'.format(str(eachN), self._NodeTable[eachN].fullRepr())
+    def table_full_dump(self):
+        for eachN in self._node_table:
+            text = 'node_id: {} {} \n'.format(str(eachN), self._node_table[eachN].full_repr())
         return text
 
-    def getChildren(self, nodeId):
-        tempNode = self._NodeTable[nodeId]
+    def get_children(self, node_id):
+        tempNode = self._node_table[node_id]
         return tempNode.children
 
-    def getNodeByName(self, name):
+    def get_node_by_name(self, name):
         try:
-            nodeId = self._nameToNodeid[name]
-            return self._NodeTable[nodeId]
+            node_id = self._name_to_node_id[name]
+            return self._node_table[node_id]
         except:
-            nodeId = None
+            node_id = None
             return None
 
-    def getNodeById(self, nodeid):
-        return self._NodeTable[nodeid]
+    def get_node_by_id(self, node_id):
+        return self._node_table[node_id]
 
-    def getNodeIdByName(self, name):
-        return self._nameToNodeid[name]
+    def getnode_idByName(self, name):
+        return self._name_to_node_id[name]
 
-    def isNodeByName(self, name):
-        if name in self._nameToNodeid:
+    def is_node_by_name(self, name):
+        if name in self._name_to_node_id:
             return True
         else:
             return False
 
-    def isRootSet(self):
-        if 'root' in self._nameToNodeid:
+    def is_root_set(self):
+        if 'root' in self._name_to_node_id:
             return False
         else:
             return True
 
-    def upDateNode(self, nodeId, updateContent):
-        """" Updates notes content by nodeId"""
-        tempNode = self._NodeTable[nodeId]
+    def up_date_node(self, node_id, updateContent):
+        """" Updates notes content by node_id"""
+        tempNode = self._node_table[node_id]
         tempNode.update(updateContent)
-        self._NodeTable[nodeId] = tempNode
+        self._node_table[node_id] = tempNode
 
-    def upDateNodeByName(self, name, updateContent):
+    def up_date_node_by_name(self, name, updateContent):
         """" Updates notes content by nodes name"""
-        nodeId = self._nameToNodeid[name]
-        tempNode = self._NodeTable[nodeId]
+        node_id = self._name_to_node_id[name]
+        tempNode = self._node_table[node_id]
         tempNode.update(updateContent)
-        self._NodeTable[nodeId] = tempNode
+        self._node_table[node_id] = tempNode
 
-    def nodeCount(self):
-        return len(self._NodeTable)
+    def node_count(self):
+        return len(self._node_table)
 
-    def prettyTreeTable(self):
+    def pretty_tree_table(self):
         """"
         An implementation of printing tree using Stack Print
         tree structure in hierarchy style.
@@ -175,19 +174,19 @@ class TreeTable(object):
             |     |___ 7
         Uses Stack structure, push and pop nodes with additional level info.
         """
-        print ('Start prettyTreeTable')
+        print ('Start pretty_tree_table')
         level = str(0)
-        nodeId = 1
-        StackONodes = [nodeId, level]   # init StackONodes
-        nodesToUpdate = {level: nodeId}  # for walk prossess
+        node_id = 1
+        StackONodes = [node_id, level]   # init StackONodes
+        nodesToUpdate = {level: node_id}  # for walk prossess
         while StackONodes:
-            # headid pointer points to the first item of stack, can be a level identifier or tree nodeid
+            # headid pointer points to the first item of stack, can be a level identifier or tree node_id
             headid = StackONodes.pop()
             if isinstance(headid, str):
                 level = headid  # move towards the root up a level
             else:
-                headNode = self._NodeTable[headid]  # move tword the leaf dowen a level
-                self.__printLabel__(headNode, StackONodes, level, self.__basicLable__)
+                headNode = self._node_table[headid]  # move tword the leaf dowen a level
+                self.__print_label__(headNode, StackONodes, level, self.__basic_lable__)
                 children = headNode.children
                 children.reverse()
                 if StackONodes:
@@ -200,7 +199,7 @@ class TreeTable(object):
                     level = str(1 + int(level))
                     StackONodes.append(level)
 
-    def __printLabel__(self, headNode, StackONodes, levelStr, labelFun):
+    def __print_label__(self, headNode, StackONodes, levelStr, labelFun):
         """
         Print a each node as a line with branch marks
         """
@@ -215,8 +214,8 @@ class TreeTable(object):
         else:
             for l in range(0, level - 1):
                 sibling = False
-                parentid = self.__getParentid__(headNode.nodeid, level - l)
-                parentN = self._NodeTable[parentid]
+                parentid = self.__get_parentid__(headNode.node_id, level - l)
+                parentN = self._node_table[parentid]
                 for c in parentN.children:
                     if c in StackONodes:
                         sibling = True
@@ -229,12 +228,12 @@ class TreeTable(object):
             if label.strip() != '-':
                 print('{0}{1}{2}'.format(leading, lasting, label))
 
-    def __basicLable__(self, headNode):
-        return str(headNode.nodeid)+' - ' + str(headNode.name)
+    def __basic_lable__(self, headNode):
+        return str(headNode.node_id)+' - ' + str(headNode.name)
 
-    def __getParentid__(self, headid, levelUp):
+    def __get_parentid__(self, headid, levelUp):
         while levelUp:
-            parentnode = self._NodeTable[headid]
+            parentnode = self._node_table[headid]
             headid = parentnode.parentid
             levelUp -= 1
         return headid
@@ -242,11 +241,11 @@ class TreeTable(object):
     def get_tree_stuff(self, headid=1):
         """stuff summer"""
         summedStuff = 1  # get stuff noraly 0 for inner
-        innerNode = self._NodeTable[headid]
-        for childNodeid in innerNode.children:  # hase children
-            childNode = self._NodeTable[childNodeid]
+        innerNode = self._node_table[headid]
+        for childnode_id in innerNode.children:  # hase children
+            childNode = self._node_table[childnode_id]
             if childNode.children:  # if childNode has children follow
-                summedStuff += self.get_tree_stuff(childNodeid)
+                summedStuff += self.get_tree_stuff(childnode_id)
             else:
                 stuff = 1  # get stuff
                 summedStuff += stuff
@@ -259,8 +258,8 @@ class TreeTable(object):
     def to_json(self):
         """ Sterilizes to json contents of the TreeTable"""
         to_jsonDict = {}
-        for nodeId in self._NodeTable:
-            to_jsonDict[nodeId] = self._NodeTable[nodeId].__dict__
+        for node_id in self._node_table:
+            to_jsonDict[node_id] = self._node_table[node_id].__dict__
         return dumps(to_jsonDict)
 
     def from_json(self, fromJson):
@@ -268,10 +267,10 @@ class TreeTable(object):
         fromDict = loads(fromJson)
         if len(fromDict) < 1:
             return 0
-        for jsonNodeId, jsonNode in fromDict.iteritems():
-            working_node = TreeTableNode(jsonNode['nodeid'], jsonNode['name'],
+        for jsonnode_id, jsonNode in fromDict.iteritems():
+            working_node = TreeTableNode(jsonNode['node_id'], jsonNode['name'],
                                          jsonNode['parentid'], jsonNode['content'],
                                          jsonNode['children']
                                          )
-            self._NodeTable[int(jsonNodeId)] = working_node
-        return self.nodeCount()
+            self._node_table[int(jsonnode_id)] = working_node
+        return self.node_count()

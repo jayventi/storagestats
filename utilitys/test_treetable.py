@@ -12,29 +12,29 @@ class TestTreeTableBaicCre(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_init_1_tableFullDump_TreeTable_init(self):
+    def test_init_1_table_table_full_dump_init(self):
         # setup
         new_dir_info_tree = TreeTable()
         #test
-        actual = new_dir_info_tree.tableFullDump()
-        expected = 'nodeId: 1 root\t parent:1 chindren: []\t  \n'
+        actual = new_dir_info_tree.table_full_dump()
+        expected = 'node_id: 1 root\t parent:1 chindren: []\t  \n'
         self.assertEqual(actual, expected)
 
-    def test_init_2_addChild_Dump_to_json(self):
+    def test_init_2_add_child_Dump_to_json(self):
         # setup
         new_dir_info_tree = TreeTable()
-        new_dir_info_tree.addChild('type 1', 1, {'stuff': 'info'})
-        new_dir_info_tree.addChild('type 2', 1, {'stuff': 'info'})
+        new_dir_info_tree.add_child('type 1', 1, {'stuff': 'info'})
+        new_dir_info_tree.add_child('type 2', 1, {'stuff': 'info'})
         #test
         actual = new_dir_info_tree.to_json()
-        expected = '{"1": {"content": {}, "parentid": 1, "children": [2, 3], "nodeid": 1, "name": "root"}, "2": {"content": {"stuff": "info"}, "parentid": 1, "children": [], "nodeid": 2, "name": "type 1"}, "3": {"content": {"stuff": "info"}, "parentid": 1, "children": [], "nodeid": 3, "name": "type 2"}}'
+        expected = '''{"1": {"content": {}, "node_id": 1, "name": "root", "parentid": 1, "children": [2, 3]}, "2": {"content": {"stuff": "info"}, "node_id": 2, "name": "type 1", "parentid": 1, "children": []}, "3": {"content": {"stuff": "info"}, "node_id": 3, "name": "type 2", "parentid": 1, "children": []}}'''
         self.assertEqual(actual, expected)
 
     def test_init_3_from_json(self):
         #setup
         new_dir_info_tree = TreeTable()
-        new_dir_info_tree.addChild('type 1', 1, {'stuff': 'info'})
-        new_dir_info_tree.addChild('type 2', 1, {'stuff': 'info'})
+        new_dir_info_tree.add_child('type 1', 1, {'stuff': 'info'})
+        new_dir_info_tree.add_child('type 2', 1, {'stuff': 'info'})
         json_str = new_dir_info_tree.to_json()
         # test
         newer_dir_info_tree = TreeTable()
@@ -47,79 +47,79 @@ class TestTreeTableBaicCre(unittest.TestCase):
 class TestTreeTable_crudTests(unittest.TestCase):
     def setUp(self):
         self.new_dir_info_tree = TreeTable()
-        self.new_dir_info_tree.addChild('type 1', 1, {'stuff': 'info'})
-        self.new_dir_info_tree.addChild('type 2', 1, {'stuff': 'info'})
+        self.new_dir_info_tree.add_child('type 1', 1, {'stuff': 'info'})
+        self.new_dir_info_tree.add_child('type 2', 1, {'stuff': 'info'})
 
     def tearDown(self):
         pass
 
-    def test_crud_01_getChildren(self):
+    def test_crud_01_get_children(self):
         #test
-        actual = self.new_dir_info_tree.getChildren(1)
+        actual = self.new_dir_info_tree.get_children(1)
         expected = [2,3]
         self.assertEqual(actual, expected)
 
-    def test_crud_02_getNodeByName(self):
+    def test_crud_02_get_node_by_name(self):
         #test
-        actual = str(self.new_dir_info_tree.getNodeByName('type 1'))
+        actual = str(self.new_dir_info_tree.get_node_by_name('type 1'))
         expected = 'type 1 : 2'
         self.assertEqual(actual, expected)
 
-    def test_crud_03_getNodeById(self):
+    def test_crud_03_get_node_by_id(self):
         #test
-        actual = str(self.new_dir_info_tree.getNodeById(1))
+        actual = str(self.new_dir_info_tree.get_node_by_id(1))
         expected = 'root : 1'
         self.assertEqual(actual, expected)
 
-    def test_crud_04_getNodeIdByName(self):
+    def test_crud_04_getnode_idByName(self):
         #test
-        actual = self.new_dir_info_tree.getNodeIdByName('type 1')
+        actual = self.new_dir_info_tree.getnode_idByName('type 1')
         expected = 2
         self.assertEqual(actual, expected)
 
-    def test_crud_05_isNodeByName_T(self):
+    def test_crud_05_is_node_by_name_T(self):
         #test
-        actual = self.new_dir_info_tree.isNodeByName('type 1')
+        actual = self.new_dir_info_tree.is_node_by_name('type 1')
         expected = True
         self.assertEqual(actual, expected)
 
-    def test_crud_05_isNodeByName_F(self):
+    def test_crud_05_is_node_by_name_F(self):
         #test
-        actual = self.new_dir_info_tree.isNodeByName('notaname')
+        actual = self.new_dir_info_tree.is_node_by_name('notaname')
         expected = False
         self.assertEqual(actual, expected)
 
-    def test_crud_06_isRootSet_F(self):
+    def test_crud_06_is_root_set_F(self):
         #test
-        actual = self.new_dir_info_tree.isRootSet()
+        actual = self.new_dir_info_tree.is_root_set()
         expected = False
         self.assertEqual(actual, expected)
 
-    def test_crud_06_setRootName_isRootSet_T(self):
+    def test_crud_06_set_root_name_is_root_set_T(self):
         # set root
-        self.new_dir_info_tree.setRootName('root_path_test', {})
+        self.new_dir_info_tree.set_root_name('root_path_test', {})
         #test
-        actual = self.new_dir_info_tree.isRootSet()
+        actual = self.new_dir_info_tree.is_root_set()
         expected = True
         self.assertEqual(actual, expected)
 
     def test_crud_07_upDateNode(self):
         #test
-        self.new_dir_info_tree.upDateNode(2, {'stuff': 'new_info'})
-        actual = self.new_dir_info_tree.getNodeById(2).content
+        self.new_dir_info_tree.up_date_node(2, {'stuff': 'new_info'})
+        actual = self.new_dir_info_tree.get_node_by_id(2).content
         expected = {'stuff': 'new_info'}
         self.assertEqual(actual, expected)
 
-    def test_crud_08_upDateNodeByName(self):
+    def test_crud_08_up_date_node_by_name(self):
         #test
-        self.new_dir_info_tree.upDateNodeByName('type 1', {'stuff2': 'newer info'})
-        actual = self.new_dir_info_tree.getNodeByName('type 1').content
+        self.new_dir_info_tree.up_date_node_by_name('type 1', {'stuff2': 'newer info'})
+        actual = self.new_dir_info_tree.get_node_by_name('type 1').content
         expected = {'stuff': 'info', 'stuff2': 'newer info'}
         self.assertEqual(actual, expected)
 
     def test_crud_09_nodeCount(self):
         #test
-        actual = self.new_dir_info_tree.nodeCount()
+        actual = self.new_dir_info_tree.node_count()
         expected = 3
         self.assertEqual(actual, expected)
 
