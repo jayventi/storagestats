@@ -27,7 +27,7 @@ class TestTreeTableBaicCre(unittest.TestCase):
         new_dir_info_tree.add_child('type 2', 1, {'stuff': 'info'})
         #test
         actual = new_dir_info_tree.to_json()
-        expected = '''{"1": {"content": {}, "node_id": 1, "name": "root", "parentid": 1, "children": [2, 3]}, "2": {"content": {"stuff": "info"}, "node_id": 2, "name": "type 1", "parentid": 1, "children": []}, "3": {"content": {"stuff": "info"}, "node_id": 3, "name": "type 2", "parentid": 1, "children": []}}'''
+        expected = '''{"1": {"content": {}, "parent_id": 1, "node_id": 1, "name": "root", "children": [2, 3]}, "2": {"content": {"stuff": "info"}, "parent_id": 1, "node_id": 2, "name": "type 1", "children": []}, "3": {"content": {"stuff": "info"}, "parent_id": 1, "node_id": 3, "name": "type 2", "children": []}}'''
         self.assertEqual(actual, expected)
 
     def test_init_3_from_json(self):
@@ -117,7 +117,7 @@ class TestTreeTable_crudTests(unittest.TestCase):
         expected = {'stuff': 'info', 'stuff2': 'newer info'}
         self.assertEqual(actual, expected)
 
-    def test_crud_09_nodeCount(self):
+    def test_crud_09_node_count(self):
         #test
         actual = self.new_dir_info_tree.node_count()
         expected = 3

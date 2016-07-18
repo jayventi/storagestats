@@ -88,10 +88,10 @@ class StorageStats(object):
             dir_entry_list = scandir(path)
             for entry in dir_entry_list:
                 if not entry.is_dir(follow_symlinks=False):
-                    thisType = entry.name.split('.')[-1]
-                    if thisType in monitor_types:
-                        dir_info[thisType] += entry.stat(follow_symlinks=False).st_size
-                        dir_info[thisType + '_Cn'] += 1
+                    this_type = entry.name.split('.')[-1]
+                    if this_type in monitor_types:
+                        dir_info[this_type] += entry.stat(follow_symlinks=False).st_size
+                        dir_info[this_type + '_Cn'] += 1
                     else:
                         other += entry.stat(follow_symlinks=False).st_size
                         other_Cn += 1
@@ -135,20 +135,20 @@ class StorageStats(object):
         starting with nodeId, uses breath first tree traversal.
         """
         level += 1
-        dirInfoRows = []
-        childNodeList = dir_info_tree.get_children(nodeId)
-        if len(childNodeList) > 0:  # if not a leaf node precess childNodes
-            dirInfoRows = [{}] * len(childNodeList)
-            for i in range(len(childNodeList)):
-                dirnode = dir_info_tree.get_node_by_id(childNodeList[i])
-                dirInfoRows[i] = self.build_dir_info(dirnode, level)
+        dir_info_rows = []
+        child_node_list = dir_info_tree.get_children(nodeId)
+        if len(child_node_list) > 0:  # if not a leaf node precess childNodes
+            dir_info_rows = [{}] * len(child_node_list)
+            for i in range(len(child_node_list)):
+                dirnode = dir_info_tree.get_node_by_id(child_node_list[i])
+                dir_info_rows[i] = self.build_dir_info(dirnode, level)
             if level < self.hist_report_level:
                 # Now iterate over children
-                for childNodeId in childNodeList:
-                    ChildrenRows = self.node_storage_by_leve(dir_info_tree, level, childNodeId)
-                    if len(ChildrenRows) > 0:  # id rows produced build/ extend new dirInfoRows list
-                        dirInfoRows = dirInfoRows + ChildrenRows
-        return dirInfoRows
+                for child_node_id in child_node_list:
+                    children_rows = self.node_storage_by_leve(dir_info_tree, level, child_node_id)
+                    if len(children_rows) > 0:  # id rows produced build/ extend new dir_info_rows list
+                        dir_info_rows = dir_info_rows + children_rows
+        return dir_info_rows
 
 
     def build_dir_info(self, dirnode, level):
@@ -156,38 +156,38 @@ class StorageStats(object):
         Build directory information dictionary
         by augmenting dirnode.content additional information
         """
-        fomatedDirInfo = dirnode.content
-        fomatedDirInfo['zz_today'] = self.today
-        fomatedDirInfo['zz_time'] = self.crtime
-        fomatedDirInfo['zz_level'] = level
-        fomatedDirInfo['path'] = dirnode.name
-        return fomatedDirInfo
+        fomated_dir_info = dirnode.content
+        fomated_dir_info['zz_today'] = self.today
+        fomated_dir_info['zz_time'] = self.crtime
+        fomated_dir_info['zz_level'] = level
+        fomated_dir_info['path'] = dirnode.name
+        return fomated_dir_info
 
 
-    def append_fs_stats_csv_file(self,  storageDateList, csv_filename, delFile=False):
+    def append_fs_stats_csv_file(self,  storage_date_list, csv_filename, del_file=False):
         """
         Appends DirInfo data as a single row to a CSV file
-        Given a list of DirInfo dictionaries as storageDateList, append each
+        Given a list of DirInfo dictionaries as storage_date_list, append each
         as a row to csv_filename.
-        If delFile=True instead of appending tcsv_filename will be deleted
+        If del_file=True instead of appending tcsv_filename will be deleted
         if it exists.
         """
-        pathFieldName = 'path'
+        path_field_name = 'path'
         file_exists = os.path.isfile(csv_filename)
-        if delFile & file_exists:
+        if del_file & file_exists:
             try:
                 os.remove(csv_filename)
                 file_exists = False
             except Exception as e:
                 logging.warn( e )
                 return
-        fieldnames = storageDateList[0].keys()
+        fieldnames = storage_date_list[0].keys()
         headers = fieldnames
-        headers.remove(pathFieldName)
+        headers.remove(path_field_name)
         headers.sort()
-        headers.append(pathFieldName)
+        headers.append(path_field_name)
         strx = 'append_fs_stats_csv_file: serializing: {0} dir node entries to: {1}'\
-            .format(len(storageDateList), csv_filename)
+            .format(len(storage_date_list), csv_filename)
         logging.info(strx)
         if self.verbosity >= 2:
             print strx
@@ -202,7 +202,7 @@ class StorageStats(object):
 
                 if not file_exists:
                     writer.writeheader()  # file doesn't exist yet, write a header
-                writer.writerows(storageDateList)
+                writer.writerows(storage_date_list)
                 t2 = time()
                 strx = 'append_fs_stats_csv_file: took: {0:.2f} seconds'.format(t2 - t1)
                 logging.info(strx)
@@ -237,7 +237,7 @@ class StorageStats(object):
                 print("arg : ", arg)
             if opt in ("-h", "--help"):
                     prtstr = '''
-                     StorageStats.py -r <root_path> -t <monitor_types> -g <log_filename>
+                     storagestats.py -r <root_path> -t <monitor_types> -g <log_filename>
                      -c <fs_history_csv_filepath> -l <hist_report_level> -d <del_csv> -v <verbosity>
                      '''
                     print(prtstr)
@@ -281,15 +281,15 @@ class StorageStats(object):
 
         # setup date for output, emit a dict of info fore each dir in tree
         # down to tree depth of self.hist_report_level
-        DirInfoToEmit = self.node_storage_by_leve(new_dir_info_tree)
+        dir_info_to_emit = self.node_storage_by_leve(new_dir_info_tree)
         if self.verbosity >= 2:
             print('\n{}\n'.format(prtstr0))
             print(prtstr1.format(new_dir_info_tree.node_count()))
         # write or append csv of FSstorageHistoryCSV
-        # TODO exspose to comand line delFile=False
-        self.append_fs_stats_csv_file(DirInfoToEmit, self.fs_history_csv_filepath, self.del_csv)
+        # TODO exspose to comand line del_file=False
+        self.append_fs_stats_csv_file(dir_info_to_emit, self.fs_history_csv_filepath, self.del_csv)
 
-        prtstr2 = 'Done pyStoigyNodeHistory main scrip execution ends'
+        prtstr2 = 'Done StorageStats main scrip execution ends'
         logging.info(prtstr2)
         loger_mang(stop_handler=self.log_handler)  # shutdown log handler
 

@@ -29,7 +29,7 @@ these files are provided for testing in testdirs.zip
 
 
 #  Basic creation and detection
-class TestpyFSstorageHistory(unittest.TestCase):
+class TestStorageStats(unittest.TestCase):
 
     def setUp(self):
         self.args = ['-r', '/testdirs', '-l', '1',
@@ -57,7 +57,7 @@ class TestpyFSstorageHistory(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def compareOrderedListOfDicts(self, listA, listB):
+    def compare_ordered_list_of_dicts(self, listA, listB):
         assertEqual = True
         expected_item_cn = (len(self.monitor_types) + 1) * 2 + 1  # expected number of similar dict entries
         for i in range(len(listA)):
@@ -66,7 +66,7 @@ class TestpyFSstorageHistory(unittest.TestCase):
                 assertEqual = assertEqual & False
         return assertEqual
 
-    def orderedListOfDictsFromCSV(self, file):
+    def ordered_list_of_dicts_from_csv(self, file):
         listOfDicts = []
         with open(self.fs_history_csv_filepath) as csvfile:
             reader = csv.DictReader(csvfile)
@@ -108,16 +108,16 @@ class TestpyFSstorageHistory(unittest.TestCase):
         actual_dict = json.loads(json_str)
         expected_dict = {"1": {u'content': {u'ps': 0, u'csv': 50000000, u'log_Cn': 1, u'log': 50000000, u'zip': 0, u'ps_Cn': 0, u'zip_Cn': 0,
                                 u'other': 52429824, u'sql_Cn': 0, u'sql': 0, u'csv_Cn': 1, u'txt_Cn': 1,
-                                u'txt': 1024, u'other_Cn': 2}, u'node_id': 1, u'children': [2, 3], u'name': u'/testdirs', u'parentid': 1},
+                                u'txt': 1024, u'other_Cn': 2}, u'node_id': 1, u'children': [2, 3], u'name': u'/testdirs', u'parent_id': 1},
                          "2": {u'content': {u'ps': 0, u'csv': 50000000, u'log_Cn': 1, u'log': 50000000, u'zip': 0, u'ps_Cn': 0, u'zip_Cn': 0,
                                u'other': 0, u'sql_Cn': 0, u'sql': 0, u'csv_Cn': 1, u'txt_Cn': 0, u'txt': 0, u'other_Cn': 0}, u'node_id': 2,
-                               u'children': [], u'name': u'/testdirs\\subDirBoo', u'parentid': 1},
+                               u'children': [], u'name': u'/testdirs\\subDirBoo', u'parent_id': 1},
                          "3": {u'content': {u'ps': 0, u'csv': 0, u'log_Cn': 0, u'log': 0, u'zip': 0, u'ps_Cn': 0, u'zip_Cn': 0,
                                u'other': 52429824, u'sql_Cn': 0, u'sql': 0, u'csv_Cn': 0, u'txt_Cn': 0, u'txt': 0, u'other_Cn': 2},
-                               u'node_id': 3, u'children': [4], u'name': u'/testdirs\\subDirFoo', u'parentid': 1},
+                               u'node_id': 3, u'children': [4], u'name': u'/testdirs\\subDirFoo', u'parent_id': 1},
                          "4": {u'content': {u'ps': 0, u'csv': 0, u'log_Cn': 0, u'log': 0, u'zip': 0, u'ps_Cn': 0, u'zip_Cn': 0, u'other': 1024,
                                u'sql_Cn': 0, u'sql': 0, u'csv_Cn': 0, u'txt_Cn': 0, u'txt': 0, u'other_Cn': 1}, u'node_id': 4, u'children': [],
-                               u'name': u'/testdirs\\subDirFoo\\subDirBar', u'parentid': 3}
+                               u'name': u'/testdirs\\subDirFoo\\subDirBar', u'parent_id': 3}
                          }
         actual_true = True
         for key in actual_dict:
@@ -134,7 +134,7 @@ class TestpyFSstorageHistory(unittest.TestCase):
                         {'ps': 0, 'txt': 0, 'log_Cn': 0, 'log': 0, 'zip': 0, 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 52429824L, 'sql_Cn': 0, 'sql': 0, 'path': '/testdirs\\subDirFoo', 'other_Cn': 2, 'csv': 0, 'csv_Cn': 0}
                         ]
         # compare list of dictionaries for equivalents
-        actual = self.compareOrderedListOfDicts(realActual, realExpected)
+        actual = self.compare_ordered_list_of_dicts(realActual, realExpected)
         expected = True
         self.assertEqual(actual, expected)
 
@@ -144,13 +144,13 @@ class TestpyFSstorageHistory(unittest.TestCase):
         self.StorageStats.dir_tree_info_pars(self.root_path, dirTable, self.monitor_types)  # lode dir info into the tree
         DirInfoToEmit = self.StorageStats.node_storage_by_leve(dirTable, level=self.hist_report_level)
         #test
-        self.StorageStats.append_fs_stats_csv_file(DirInfoToEmit, self.fs_history_csv_filepath, delFile=True)
+        self.StorageStats.append_fs_stats_csv_file(DirInfoToEmit, self.fs_history_csv_filepath, del_file=True)
         # open actual fs_history_csv_filepath for actual to expected comparison
         realExpected = self.expected_csv_date
         # Get Ordered List Of Dicts From the self.fs_history_csv_filepath CSV just loaded
-        realActual = self.orderedListOfDictsFromCSV(self.fs_history_csv_filepath)
+        realActual = self.ordered_list_of_dicts_from_csv(self.fs_history_csv_filepath)
         # compare list of dictionaries for equivalents
-        actual = self.compareOrderedListOfDicts(realActual, realExpected)
+        actual = self.compare_ordered_list_of_dicts(realActual, realExpected)
         expected = True
         self.assertEqual(actual, expected)
 
@@ -160,15 +160,15 @@ class TestpyFSstorageHistory(unittest.TestCase):
                     '-g', 'log_files/run_FSH.log',
                     '-c', 'data_files/FS_HistoryFull.csv',
                     '-t', 'zip, txt,csv, sql,ps ,log']
-        myNewFSstorageHist = StorageStats(args=fullArgs, verbosity=1)
-        myNewFSstorageHist.main_bach()
+        my_new_fs_storage_hist = StorageStats(args=fullArgs, verbosity=1)
+        my_new_fs_storage_hist.main_bach()
         #test
         # open actual fs_history_csv_filepath for incomparsin
         realExpected = self.expected_csv_date
         # Get Ordered List Of Dicts From the self.fs_history_csv_filepath CSV just loaded
-        realActual = self.orderedListOfDictsFromCSV(self.fs_history_csv_filepath)
+        realActual = self.ordered_list_of_dicts_from_csv(self.fs_history_csv_filepath)
         # compare list of dictionaries for equivalents
-        actual = self.compareOrderedListOfDicts(realActual, realExpected)
+        actual = self.compare_ordered_list_of_dicts(realActual, realExpected)
         expected = True
         self.assertEqual(actual, expected)
 
@@ -176,7 +176,7 @@ if __name__ == "__main__":
    unittest.main(verbosity=2)
 
 ## command line test vectors TODO FIND A TEST FRAMWORK
-# python StorageStats.py -h
+# python storagestats.py -h
 # python storagestats.py -l 1 -g "log_files/run_FSH.log" -c data_files/FS_History.csv -t "zip, txt,csv, sql,ps ,log"
 # python storagestats.py -r C:/wamp/www -t "php, txt,csv, sql,txt ,log" -l 2
 # python storagestats.py -r /testdirs -l 1 -g "log_files/run_FSH.log" -c data_files/FS_History.csv -t "zip, txt,csv, sql,ps ,log"
