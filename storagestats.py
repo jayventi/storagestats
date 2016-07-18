@@ -129,7 +129,7 @@ class StorageStats(object):
         return dir_info
 
 
-    def nodeStorageByLeve(self, dir_info_tree, level=0, nodeId=1):
+    def node_storage_by_leve(self, dir_info_tree, level=0, nodeId=1):
         """
         Emits a list of dir info dicts for level depth in dir_info_tree,
         starting with nodeId, uses breath first tree traversal.
@@ -141,17 +141,17 @@ class StorageStats(object):
             dirInfoRows = [{}] * len(childNodeList)
             for i in range(len(childNodeList)):
                 dirnode = dir_info_tree.get_node_by_id(childNodeList[i])
-                dirInfoRows[i] = self.buildDirInfo(dirnode, level)
+                dirInfoRows[i] = self.build_dir_info(dirnode, level)
             if level < self.hist_report_level:
                 # Now iterate over children
                 for childNodeId in childNodeList:
-                    ChildrenRows = self.nodeStorageByLeve(dir_info_tree, level, childNodeId)
+                    ChildrenRows = self.node_storage_by_leve(dir_info_tree, level, childNodeId)
                     if len(ChildrenRows) > 0:  # id rows produced build/ extend new dirInfoRows list
                         dirInfoRows = dirInfoRows + ChildrenRows
         return dirInfoRows
 
 
-    def buildDirInfo(self, dirnode, level):
+    def build_dir_info(self, dirnode, level):
         """
         Build directory information dictionary
         by augmenting dirnode.content additional information
@@ -164,7 +164,7 @@ class StorageStats(object):
         return fomatedDirInfo
 
 
-    def appendFSHistCSVfile(self,  storageDateList, csv_filename, delFile=False):
+    def append_fs_stats_csv_file(self,  storageDateList, csv_filename, delFile=False):
         """
         Appends DirInfo data as a single row to a CSV file
         Given a list of DirInfo dictionaries as storageDateList, append each
@@ -186,7 +186,7 @@ class StorageStats(object):
         headers.remove(pathFieldName)
         headers.sort()
         headers.append(pathFieldName)
-        strx = 'appendFSHistCSVfile: serializing: {0} dir node entries to: {1}'\
+        strx = 'append_fs_stats_csv_file: serializing: {0} dir node entries to: {1}'\
             .format(len(storageDateList), csv_filename)
         logging.info(strx)
         if self.verbosity >= 2:
@@ -204,7 +204,7 @@ class StorageStats(object):
                     writer.writeheader()  # file doesn't exist yet, write a header
                 writer.writerows(storageDateList)
                 t2 = time()
-                strx = 'appendFSHistCSVfile: took: {0:.2f} seconds'.format(t2 - t1)
+                strx = 'append_fs_stats_csv_file: took: {0:.2f} seconds'.format(t2 - t1)
                 logging.info(strx)
                 if self.verbosity >= 2:
                     print strx
@@ -259,7 +259,7 @@ class StorageStats(object):
         # print 'return',[root_path, monitor_types, log_filename, fs_history_csv_filepath, hist_report_level, verbos]
         return [root_path, monitor_types, log_filename, fs_history_csv_filepath, hist_report_level, verbos, del_csv]
 
-    def mainBach(self):
+    def main_bach(self):
         """
         Orchestrates main execution for StorageStats
         """
@@ -281,13 +281,13 @@ class StorageStats(object):
 
         # setup date for output, emit a dict of info fore each dir in tree
         # down to tree depth of self.hist_report_level
-        DirInfoToEmit = self.nodeStorageByLeve(new_dir_info_tree)
+        DirInfoToEmit = self.node_storage_by_leve(new_dir_info_tree)
         if self.verbosity >= 2:
             print('\n{}\n'.format(prtstr0))
             print(prtstr1.format(new_dir_info_tree.node_count()))
         # write or append csv of FSstorageHistoryCSV
         # TODO exspose to comand line delFile=False
-        self.appendFSHistCSVfile(DirInfoToEmit, self.fs_history_csv_filepath, self.del_csv)
+        self.append_fs_stats_csv_file(DirInfoToEmit, self.fs_history_csv_filepath, self.del_csv)
 
         prtstr2 = 'Done pyStoigyNodeHistory main scrip execution ends'
         logging.info(prtstr2)
@@ -310,7 +310,7 @@ def main(args):
     mystoragestats = StorageStats(args=args)
 
     # run, scandir, build tree, output csv
-    mystoragestats.mainBach()
+    mystoragestats.main_bach()
 
 if __name__ == '__main__':
         main(sys.argv[1:])

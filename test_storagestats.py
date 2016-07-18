@@ -124,12 +124,12 @@ class TestpyFSstorageHistory(unittest.TestCase):
             actual_true = actual_true & (actual_dict[key] == expected_dict[key])
         self.assertEqual(actual_true, True)
 
-    def test_04_nodeStorageByLeve(self):
+    def test_04_node_storage_by_leve(self):
         #setup
         dirTable = TreeTable()  # init tree
         self.StorageStats.dir_tree_info_pars(self.root_path, dirTable, self.monitor_types)  # lode dri info into the tree
         #test
-        realActual = self.StorageStats.nodeStorageByLeve(dirTable, level=self.hist_report_level)
+        realActual = self.StorageStats.node_storage_by_leve(dirTable, level=self.hist_report_level)
         realExpected = [{'ps': 0, 'txt': 0, 'log_Cn': 1, 'log': 50000000L, 'zip': 0, 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 0, 'sql_Cn': 0, 'sql': 0, 'path': '/testdirs\\subDirBoo', 'other_Cn': 0, 'csv': 50000000L, 'csv_Cn': 1},
                         {'ps': 0, 'txt': 0, 'log_Cn': 0, 'log': 0, 'zip': 0, 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 52429824L, 'sql_Cn': 0, 'sql': 0, 'path': '/testdirs\\subDirFoo', 'other_Cn': 2, 'csv': 0, 'csv_Cn': 0}
                         ]
@@ -138,13 +138,13 @@ class TestpyFSstorageHistory(unittest.TestCase):
         expected = True
         self.assertEqual(actual, expected)
 
-    def test_05_appendFSHistCSVfile(self):
+    def test_05_append_fs_stats_csv_file(self):
         #setup
         dirTable = TreeTable()  # init tree
         self.StorageStats.dir_tree_info_pars(self.root_path, dirTable, self.monitor_types)  # lode dir info into the tree
-        DirInfoToEmit = self.StorageStats.nodeStorageByLeve(dirTable, level=self.hist_report_level)
+        DirInfoToEmit = self.StorageStats.node_storage_by_leve(dirTable, level=self.hist_report_level)
         #test
-        self.StorageStats.appendFSHistCSVfile(DirInfoToEmit, self.fs_history_csv_filepath, delFile=True)
+        self.StorageStats.append_fs_stats_csv_file(DirInfoToEmit, self.fs_history_csv_filepath, delFile=True)
         # open actual fs_history_csv_filepath for actual to expected comparison
         realExpected = self.expected_csv_date
         # Get Ordered List Of Dicts From the self.fs_history_csv_filepath CSV just loaded
@@ -154,14 +154,14 @@ class TestpyFSstorageHistory(unittest.TestCase):
         expected = True
         self.assertEqual(actual, expected)
 
-    def test_06_mainBach(self):
+    def test_06_main_bach(self):
         # setup
         fullArgs = ['-r', '/testdirs', '-l', '1',
                     '-g', 'log_files/run_FSH.log',
                     '-c', 'data_files/FS_HistoryFull.csv',
                     '-t', 'zip, txt,csv, sql,ps ,log']
         myNewFSstorageHist = StorageStats(args=fullArgs, verbosity=1)
-        myNewFSstorageHist.mainBach()
+        myNewFSstorageHist.main_bach()
         #test
         # open actual fs_history_csv_filepath for incomparsin
         realExpected = self.expected_csv_date
