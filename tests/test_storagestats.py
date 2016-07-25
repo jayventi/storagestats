@@ -9,7 +9,6 @@ TODO future versions will build this as part of thenit test setup.
 
 import unittest
 import json
-from  os import path
 import string
 from storagestats import *
 
