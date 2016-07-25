@@ -1,0 +1,9 @@
+# Byte-compiled 
+*.pyc
+
+# log files
+*.log
+*.txt.*
+
+# output files
+*.csv
