@@ -106,7 +106,7 @@ class TreeTable(object):
             self.add_child(child.name, parent_id, child.content)
 
     def table_dump(self):
-        print self._node_table
+        print(self._node_table)
 
     def table_full_dump(self):
         for each_nd in self._node_table:
@@ -208,7 +208,7 @@ class TreeTable(object):
         label = label_fun(head_node)
         level = int(level_str)
         if level == 0:
-            print leading + label
+            print (leading + label)
         else:
             for l in range(0, level - 1):
                 sibling = False

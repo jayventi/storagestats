@@ -7,14 +7,14 @@ for each directory within a given root directory. statistics are written
 to a node tree which emulates the branching structure of the file system
 branch given by the root directory. A given node contains summarized
 statistics for itself and all children and subchildren. Utilizes scandir
-for file system accesswhich must be added for python 2.7
+for file system accesswhich must be added for python < 3.0
 
-python 2.7
+python
 Created on Jun 23, 2016
 @author: jayventi
 """
 
-# python 2.7 import
+# python import
 import os.path
 import csv
 import sys
@@ -22,8 +22,12 @@ import getopt
 
 from time import gmtime, strftime, time
 
-# scandir a 2.7 dependency
-from scandir import scandir
+if sys.version_info < (3, 0):
+    # scandir needs to be important as an external module
+    from scandir import scandir
+else:
+    # As of 3 scandir was added to the os module
+    from os import scandir
 
 # this project
 from loger_tool import *
@@ -39,7 +43,7 @@ class StorageStats(object):
         return v.lower() in ("yes", "true", "t", "1") if v else None
 
     def __init__(self,
-                 root_path= 'testdirs', #  C:\work\Dojo',
+                 root_path='testdirs',
                  monitor_types=['js', 'zip', 'txt', 'csv', 'sql', 'ps', 'log'],
                  log_filename='log_files/run_log.log',
                  fs_history_csv_filepath='data_files/FSHistory.csv',
@@ -77,7 +81,7 @@ class StorageStats(object):
         Fof each monitor file type an additional key is produced
         "types +'_Cn'" for file count value set to integer file
         count for that type. all files not falling under
-        monitor_types are summarized in the default category 
+        monitor_types are summarized in the default category
         'other'
         """
         dir_info = {}
@@ -182,15 +186,15 @@ class StorageStats(object):
                 logging.warn( e )
                 return
         fieldnames = storage_date_list[0].keys()
-        headers = fieldnames
-        headers.remove(path_field_name)
-        headers.sort()
-        headers.append(path_field_name)
+        fieldnames = list(fieldnames)
+        fieldnames.remove(path_field_name)
+        fieldnames.sort()
+        fieldnames.append(path_field_name)
         strx = 'append_fs_stats_csv_file: serializing: {0} dir node entries to: {1}'\
             .format(len(storage_date_list), csv_filename)
         logging.info(strx)
         if self.verbosity >= 2:
-            print strx
+            print(strx)
         t1 = time()
         try:
             with open(csv_filename, 'a') as csvfile:
@@ -207,7 +211,7 @@ class StorageStats(object):
                 strx = 'append_fs_stats_csv_file: took: {0:.2f} seconds'.format(t2 - t1)
                 logging.info(strx)
                 if self.verbosity >= 2:
-                    print strx
+                    print(strx)
         except Exception as e:
             logging.warn( e )
 

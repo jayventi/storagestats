@@ -123,14 +123,5 @@ class TestTreeTable_crudTests(unittest.TestCase):
         expected = 3
         self.assertEqual(actual, expected)
 
- # TODO chpcher staderOut from print in prettyTreeTable
- #    def test_crud_10_prettyTreeTable(self):
- #        actual = self.new_dir_info_tree.prettyTreeTable())
- #        expected = """Start prettyTreeTable
- # 1 - root
- # |___ 2 - type 1
- #      |___ 3 - type 2"""
- #        self.assertEqual(actual, expected)
-
 if __name__ == "__main__":
     unittest.main(verbosity=2)
