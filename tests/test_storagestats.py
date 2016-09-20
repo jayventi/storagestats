@@ -1,6 +1,6 @@
-# test_pyFSstorageHistory
+# test_storagestats.py
 """
-Unit test fixture for pyFSstorageHistory.py
+Unit test fixture for test_storagestats.py
 currently the test assumes that you have built a directory structure
 listed below in the setup requirement section.
 
