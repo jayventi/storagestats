@@ -3,11 +3,12 @@ python:
   #- "2.7"
   #- "3.2"
   #- "3.3"
-  #- "3.4"
-  - "3.5"
+  - "3.4"
+  #- "3.5"
 
 before_install:
-  - export PATH=$(echo $PATH | tr ':' "\n" | sed '/\/opt\/python/d' | tr "\n" ":" | sed "s|::|:|g")
+  #- export PATH=$(echo $PATH | tr ':' "\n" | sed '/\/opt\/python/d' | tr "\n" ":" | sed "s|::|:|g")
+  - export PYTHONPATH=/usr/lib/python3/dist-packages:/usr/local/lib/python3.4/dist-packages
 # command to install dependencies
 #install: "pip install -r requirements.txt"
 # command to run tests
