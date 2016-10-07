@@ -9,7 +9,7 @@ TODO future versions will build this as part of thenit test setup.
 
 import unittest
 import json
-import string
+import string # KILL???
 from storagestats import *
 
 """
@@ -48,10 +48,10 @@ class TestStorageStats(unittest.TestCase):
         self.StorageStats = StorageStats(args=self.args, verbosity=1)
         self.expected_csv_date = [{'ps': '0', 'txt': '0', 'log_Cn': '1', 'log': '50000000', 'zip': '0', 'ps_Cn': '0',
                                   'txt_Cn': '0', 'zip_Cn': '0', 'other': '0', 'sql_Cn': '0', 'sql': '0',
-                                  'path': 'testdirs\\subDirBoo', 'csv_Cn': '1', 'csv': '50000000', 'other_Cn': '0'},
+                                  'path': 'testdirs/subDirBoo', 'csv_Cn': '1', 'csv': '50000000', 'other_Cn': '0'},
                                   {'ps': '0', 'txt': '0', 'log_Cn': '0',
                                    'log': '0', 'zip': '0', 'ps_Cn': '0', 'txt_Cn': '0', 'zip_Cn': '0', 'other': '52429824',
-                                   'sql_Cn': '0', 'sql': '0', 'path': 'testdirs\\subDirFoo', 'csv_Cn': '0',
+                                   'sql_Cn': '0', 'sql': '0', 'path': 'testdirs/subDirFoo', 'csv_Cn': '0',
                                    'csv': '0', 'other_Cn': '2'}
                                   ]
 
@@ -63,7 +63,7 @@ class TestStorageStats(unittest.TestCase):
             for row in csv_list:
                 for key in row:
                     if isinstance(row[key], str):
-                        row[key] = string.replace(row[key], '\\', '/')
+                        row[key] = str.replace(row[key], '/', '/')
         return csv_list
 
     def compare_ordered_list_of_dicts(self, listA, listB):
@@ -120,19 +120,19 @@ class TestStorageStats(unittest.TestCase):
                                u'txt': 1024, u'other_Cn': 2}, u'node_id': 1, u'children': [2, 3], u'name': u'testdirs', u'parent_id': 1},
                          "2": {u'content': {u'ps': 0, u'csv': 50000000, u'log_Cn': 1, u'log': 50000000, u'zip': 0, u'ps_Cn': 0, u'zip_Cn': 0,
                                u'other': 0, u'sql_Cn': 0, u'sql': 0, u'csv_Cn': 1, u'txt_Cn': 0, u'txt': 0, u'other_Cn': 0}, u'node_id': 2,
-                               u'children': [], u'name': u'testdirs\\subDirBoo', u'parent_id': 1},
+                               u'children': [], u'name': u'testdirs/subDirBoo', u'parent_id': 1},
                          "3": {u'content': {u'ps': 0, u'csv': 0, u'log_Cn': 0, u'log': 0, u'zip': 0, u'ps_Cn': 0, u'zip_Cn': 0,
                                u'other': 52429824, u'sql_Cn': 0, u'sql': 0, u'csv_Cn': 0, u'txt_Cn': 0, u'txt': 0, u'other_Cn': 2},
-                               u'node_id': 3, u'children': [4], u'name': u'testdirs\\subDirFoo', u'parent_id': 1},
+                               u'node_id': 3, u'children': [4], u'name': u'testdirs/subDirFoo', u'parent_id': 1},
                          "4": {u'content': {u'ps': 0, u'csv': 0, u'log_Cn': 0, u'log': 0, u'zip': 0, u'ps_Cn': 0, u'zip_Cn': 0, u'other': 1024,
                                u'sql_Cn': 0, u'sql': 0, u'csv_Cn': 0, u'txt_Cn': 0, u'txt': 0, u'other_Cn': 1}, u'node_id': 4, u'children': [],
-                               u'name': u'testdirs\\subDirFoo\\subDirBar', u'parent_id': 3}
+                               u'name': u'testdirs/subDirFoo/subDirBar', u'parent_id': 3}
                          }
         if os.path.sep == '/':
-            for key_row, row in expected_dict.iteritems():
+            for key_row, row in expected_dict.items():
                 for key in row:
-                    if isinstance(row[key], basestring):
-                        expected_dict[key_row][key] = string.replace(row[key], '\\', '/')
+                    if isinstance(row[key], str):
+                        expected_dict[key_row][key] = str.replace(row[key], '\\', '/')
 
         actual_true = True
         for key in actual_dict:
@@ -145,8 +145,8 @@ class TestStorageStats(unittest.TestCase):
         self.StorageStats.dir_tree_info_pars(self.root_path, dirTable, self.monitor_types)  # lode dri info into the tree
         #test
         actual_dict = self.StorageStats.node_storage_by_leve(dirTable, level=self.hist_report_level)
-        expected_dict = [{'ps': 0, 'txt': 0, 'log_Cn': 1, 'log': 50000000, 'zip': 0, 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 0, 'sql_Cn': 0, 'sql': 0, 'path': 'testdirs\\subDirBoo', 'other_Cn': 0, 'csv': 50000000, 'csv_Cn': 1},
-                         {'ps': 0, 'txt': 0, 'log_Cn': 0, 'log': 0, 'zip': 0, 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 52429824, 'sql_Cn': 0, 'sql': 0, 'path': 'testdirs\\subDirFoo', 'other_Cn': 2, 'csv': 0, 'csv_Cn': 0}
+        expected_dict = [{'ps': 0, 'txt': 0, 'log_Cn': 1, 'log': 50000000, 'zip': 0, 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 0, 'sql_Cn': 0, 'sql': 0, 'path': 'testdirs/subDirBoo', 'other_Cn': 0, 'csv': 50000000, 'csv_Cn': 1},
+                         {'ps': 0, 'txt': 0, 'log_Cn': 0, 'log': 0, 'zip': 0, 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 52429824, 'sql_Cn': 0, 'sql': 0, 'path': 'testdirs/subDirFoo', 'other_Cn': 2, 'csv': 0, 'csv_Cn': 0}
                          ]
         expected_dict = self.ospath_formter_for_list_of_dicts(expected_dict)
         # compare list of dictionaries for equivalents
@@ -193,6 +193,6 @@ if __name__ == "__main__":
 ## command line test vectors TODO FIND A TEST FRAMWORK
 # python storagestats.py -h
 # python storagestats.py -l 1 -g "log_files/run_FSH.log" -c data_files/FS_History.csv -t "zip, txt,csv, sql,ps ,log"
-# python storagestats.py -r C:/wamp/www -t "php, txt,csv, sql,txt ,log" -l 2
+# python storagestats.py -r ~/ -t "php, txt,csv, sql,txt ,log" -l 2 -v
 # python storagestats.py -r testdirs -l 1 -g "log_files/run_FSH.log" -c data_files/FS_History.csv -t "zip, txt,csv, sql,ps ,log"
 # python storagestats.py -r testdirs -l 1 -g "log_files/run_FSH.log" -v 1
