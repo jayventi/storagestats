@@ -105,7 +105,7 @@ class TestStorageStats(unittest.TestCase):
     def test_02_dir_totals_by_type(self):
         #test
         actual = self.StorageStats.dir_totals_by_type(self.root_path, self.monitor_types)
-        expected = {'ps': 0, 'csv': 0, 'log_Cn': 0, 'log': 0, 'zip': 0, 'ps_Cn': 0, 'zip_Cn': 0, 'other': 0, 'other_Cn': 0, 'sql_Cn': 0, 'sql': 0, 'csv_Cn': 0, 'txt': 1024L, 'txt_Cn': 1}
+        expected = {'ps': 0, 'csv': 0, 'log_Cn': 0, 'log': 0, 'zip': 0, 'ps_Cn': 0, 'zip_Cn': 0, 'other': 0, 'other_Cn': 0, 'sql_Cn': 0, 'sql': 0, 'csv_Cn': 0, 'txt': 1024, 'txt_Cn': 1}
         self.assertEqual(actual, expected)
 
     def test_03_dir_tree_info_pars(self):
@@ -145,8 +145,8 @@ class TestStorageStats(unittest.TestCase):
         self.StorageStats.dir_tree_info_pars(self.root_path, dirTable, self.monitor_types)  # lode dri info into the tree
         #test
         actual_dict = self.StorageStats.node_storage_by_leve(dirTable, level=self.hist_report_level)
-        expected_dict = [{'ps': 0, 'txt': 0, 'log_Cn': 1, 'log': 50000000L, 'zip': 0, 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 0, 'sql_Cn': 0, 'sql': 0, 'path': 'testdirs\\subDirBoo', 'other_Cn': 0, 'csv': 50000000L, 'csv_Cn': 1},
-                         {'ps': 0, 'txt': 0, 'log_Cn': 0, 'log': 0, 'zip': 0, 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 52429824L, 'sql_Cn': 0, 'sql': 0, 'path': 'testdirs\\subDirFoo', 'other_Cn': 2, 'csv': 0, 'csv_Cn': 0}
+        expected_dict = [{'ps': 0, 'txt': 0, 'log_Cn': 1, 'log': 50000000, 'zip': 0, 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 0, 'sql_Cn': 0, 'sql': 0, 'path': 'testdirs\\subDirBoo', 'other_Cn': 0, 'csv': 50000000, 'csv_Cn': 1},
+                         {'ps': 0, 'txt': 0, 'log_Cn': 0, 'log': 0, 'zip': 0, 'ps_Cn': 0, 'txt_Cn': 0, 'zip_Cn': 0, 'other': 52429824, 'sql_Cn': 0, 'sql': 0, 'path': 'testdirs\\subDirFoo', 'other_Cn': 2, 'csv': 0, 'csv_Cn': 0}
                          ]
         expected_dict = self.ospath_formter_for_list_of_dicts(expected_dict)
         # compare list of dictionaries for equivalents

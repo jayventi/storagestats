@@ -2,7 +2,7 @@
 
 import unittest
 
-from treetable import TreeTable
+from .treetable import TreeTable
 
 #  Basic creation and detection
 class TestTreeTableBaicCre(unittest.TestCase):
