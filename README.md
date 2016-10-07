@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/jayventi/storagestats.svg?branch=master)](https://travis-ci.org/jayventi/storagestats)
 ##storagestats##
 
 ### Description ###
