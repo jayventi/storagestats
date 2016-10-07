@@ -1,4 +1,3 @@
-https://travis-ci.org/jayventi/storagestats.svg?branch=master
 ##storagestats##
 
 ### Description ###
