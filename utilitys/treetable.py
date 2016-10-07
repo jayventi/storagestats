@@ -265,7 +265,7 @@ class TreeTable(object):
         from_dict = loads(from_json)
         if len(from_dict) < 1:
             return 0
-        for jsonnode_id, json_node in from_dict.iteritems():
+        for jsonnode_id, json_node in from_dict.items():
             working_node = TreeTableNode(json_node['node_id'], json_node['name'],
                                          json_node['parent_id'], json_node['content'],
                                          json_node['children']
