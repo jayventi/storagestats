@@ -12,7 +12,7 @@ import json
 from storagestats import *
 
 """
-test setup  depends  on manual creation of the following
+Test setup depends on files in the testdirs
 directories and files
 1 - testdirs
 |___ File_A.txt    1024 b
@@ -24,7 +24,8 @@ directories and files
       |___ 4 - testdirs/subDirFoo/subDirBar
           |___ File_E.py    1024 b
 
-these files are provided for testing in testdirs.zip
+Tese files are provided for testing in the estdirs
+directories
 """
 
 
