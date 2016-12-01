@@ -197,6 +197,8 @@ if __name__ == "__main__":
 ## command line test vectors TODO FIND A TEST FRAMWORK
 # python storagestats.py -h
 # python storagestats.py -l 1 -g "log_files/run_FSH.log" -c data_files/FS_History.csv -t "zip, txt,csv, sql,ps ,log"
-# python storagestats.py -r ~/ -t "php, txt,csv, sql,txt ,log" -l 2 -v
+# python storagestats.py -r C:\Python27 -c data_files/FS_python.csv -t "exe, txt, py, pyc, sql, lib , dll, txt" -l 2 -v 2
+# python storagestats.py -r C:\wamp\bin\mysql\mysql5.6.17 -c data_files/FS_mysql5.6.17.csv -t "exe, txt, py, pyc, sql, lib , dll, txt" -l 2 -v 2
+# python storagestats.py -r C:\wamp\apps\phpmyadmin4.1.14 -c data_files/FS_phpmyadmin4.csv -t "exe, txt, py, pyc, sql, lib , dll, txt" -l 2 -v 2
 # python storagestats.py -r testdirs -l 1 -g "log_files/run_FSH.log" -c data_files/FS_History.csv -t "zip, txt,csv, sql,ps ,log"
 # python storagestats.py -r testdirs -l 1 -g "log_files/run_FSH.log" -v 1
