@@ -1,10 +1,10 @@
 [![Build Status](https://travis-ci.org/jayventi/storagestats.svg?branch=master)](https://travis-ci.org/jayventi/storagestats)
-##storagestats##
+## storagestats ##
 
 ### Description ###
 storagestats is intended as a command line utility which analyzes local disk storage utilization starting at a specific root directory and summing files stored under that directory by types which are specifiable. Each node contains utilization statistics for that node and all of its child nodes down to the leaf directories. That is, space utilization is summed for a list of subcategories such as *.log files. Not only do specific types in a directory contribute to the sums for the directory but also all of their child directories recursively. The output is appended to a CSV file with one row per directory containing utilization statistics plus pathname, tree level, and date-time the utility ran. The intent is to produce an output file that can be used to produce time series statistics by a secondary program. Only a subset of the directories are output to the CSV file this is determined by a level parameter which restricts the number of output directories to those contained within a specified number of levels below the root directory.
 
-###Background###
+### Background ###
 This utility is designed to produce statistics to allow the monitoring of data file growth where data is deposited as sets of flat files written to a file system using a directory structure as a cataloging system. It is imagined that this utility will be run as a line command in a cron process periodically monitoring storage growth of a given directory structure. It is assumed that some other program will be responsible for digesting the historical information produced by this utility. storagestats is specifically designed to monitor directory structures which grow but do not shrink, there are no provisions made for handling or annotating changes that occur in a directory structure.
 
 ## Installation ##
@@ -14,7 +14,7 @@ Deploy all the files and directories from the git repository to a convenient dir
 When executed output CSV files will be written to data_files/FSHistory.csv and log files to log_files/run_log.log. These values are configurable on the command line if you use different paths they will need to be created before used.
 
 
-##Python dependencies##
+## Python dependencies ##
 
 **scandir**
 https://github.com/benhoyt/scandir
@@ -23,7 +23,7 @@ scandir Is included in Python 3.3 and higher
 As os.scandir, see github scandir readme.
 
 
-##storagestats Command line##
+## storagestats Command line ##
 
 
 
